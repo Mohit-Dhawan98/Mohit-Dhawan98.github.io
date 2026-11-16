@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>mohit dhawan / work / mutual match</title>
+<meta name="description" content="A case study: moving a matchmaking system from each person's best match to the match both people accept took mutual acceptance from 22% to 68%.">
+<meta property="og:title" content="Your best match is not the match that works">
+<meta property="og:description" content="Dealbreaker filters, per-person weights and bidirectional matching took mutual acceptance from 22% to 68%.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:,">
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add("js");
+  try {
+    var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") d.setAttribute("data-theme", t);
+    if (localStorage.getItem("sound") === "off") d.classList.add("sound-off");
+  } catch (e) {}
+  setTimeout(function () { if (!window.motion) d.classList.remove("js"); }, 3000);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap">
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="band strip">
+  <nav class="nav" aria-label="Site">
+    <a class="nav-name" href="../index.html">Mohit Dhawan</a>
+    <div class="nav-links">
+      <a href="../index.html#work" aria-current="true">work</a>
+      <a href="../index.html#co-independent">projects</a>
+      <a href="https://themlnerd.substack.com" target="_blank" rel="noopener">writing</a>
+      <button type="button" class="snd" data-sound-toggle aria-pressed="true">Sound on</button>
+      <button type="button" class="thm" data-theme-toggle aria-label="Dark theme for the page" aria-pressed="false"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4L7 17m10-10l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </div>
+  </nav>
+</header>
+<canvas class="seam" aria-hidden="true"></canvas>
+
+<svg id="pat-defs" aria-hidden="true"><defs>
+  <pattern id="st-hot" width="3" height="10" patternUnits="userSpaceOnUse"><rect width="2" height="10" fill="#ff5904"/></pattern>
+  <pattern id="st-grey" width="3" height="10" patternUnits="userSpaceOnUse"><rect width="2" height="10" fill="#8a8a86"/></pattern>
+  <pattern id="st-dim" width="3" height="10" patternUnits="userSpaceOnUse"><rect width="2" height="10" fill="#4a4a4a"/></pattern>
+</defs></svg>
+
+<main class="page dd" id="main">
+  <p class="crumb"><a href="../index.html#work">work</a> / mutual match</p>
+  <h1>Your best match is not the match that works</h1>
+  <p class="lede">A matchmaking app kept introducing people to their highest-scoring candidate, who often did not feel the same. Checking dealbreakers first, then choosing pairs who rank each other highly, took mutual acceptance from 22% to 68%.</p>
+
+  <dl class="facts">
+    <div><dt>Role</dt><dd>ML engineer on the matching system</dd></div>
+    <div><dt>Where</dt><dd>An AI matchmaking app. The client is not named.</dd></div>
+    <div><dt>Stack</dt><dd>Pinecone, Gemini 2.5 Flash, a multimodal model for photos, Temporal</dd></div>
+    <div><dt>Status</dt><dd>Reported as running in production in the article</dd></div>
+    <div><dt>Article</dt><dd><a class="tlink" href="https://themlnerd.substack.com/p/why-the-girl-you-want-doesnt-want" target="_blank" rel="noopener">Why the girl you want doesn't want you back<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></dd></div>
+    <div><dt>Code</dt><dd><a class="tlink" href="https://github.com/Mohit-Dhawan98/wavelength" target="_blank" rel="noopener">wavelength, the method as an open engine<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></dd></div>
+  </dl>
+
+  <h2>The problem</h2>
+  <p>A film recommender can be wrong cheaply. You skip the film. A matchmaker that is wrong costs someone an evening, and after a few of those, their trust.</p>
+  <p>The first version of the system was good at one thing. For each person it found the candidate who looked most compatible. The trouble was on the other side of the introduction. The most compatible candidate often did not think the same of you, and only 22% of introductions were accepted by both people.</p>
+  <p>Matchmaking is not a ranking problem. It is a two-sided market, and a score that describes one side says nothing about the other.</p>
+
+<figure class="fig" id="scene" data-scene>
+          <div class="fig-in">
+            <div class="phead"><span class="lab">Best match vs <b>mutual match</b></span><span data-scene-count>1 / 3</span></div>
+            <div class="stepline" aria-live="polite"><span class="n" data-scene-n>STEP 1 OF 3</span><span><span data-scene-text></span><span class="caret" aria-hidden="true"></span></span></div>
+            <div class="svgw"><svg class="fx" viewBox="0 0 680 330" role="img" aria-label="A diagram of one person and three candidates. It steps through three ways of choosing who to introduce.">
+              <defs>
+                <marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5L8.5 5L1 8.5" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+              </defs>
+              <text class="h" x="20" y="26">WHO IS ASKING</text>
+              <text class="h" x="230" y="26">CANDIDATES</text>
+              <text class="h" x="430" y="26">YOUR RANK</text>
+              <text class="h" x="560" y="26">THEIR RANK</text>
+
+              <g class="node" id="n-you"><rect class="box" x="20" y="124" width="100" height="44" rx="6"/><text class="t" x="70" y="150" text-anchor="middle">you</text></g>
+
+              <path class="edge" id="e-1" d="M120 140 H180 V72 H226" marker-end="url(#ah)"/>
+              <path class="edge" id="e-2" d="M120 146 H226" marker-end="url(#ah)"/>
+              <path class="edge" id="e-3" d="M120 152 H180 V220 H226" marker-end="url(#ah)"/>
+              <path class="edge back" id="b-1" d="M230 84 H194 V132" opacity="0"/>
+              <path class="edge back" id="b-3" d="M230 232 H166 V160 H124" marker-end="url(#ah)" opacity="0"/>
+              <path class="breaker" id="brk" d="M196 139 l12 14 m0 -14 l-12 14"/>
+
+              <g class="node" id="n-1"><rect class="box" x="230" y="50" width="170" height="44" rx="6"/><text class="t" x="244" y="69">candidate A</text><text class="s" x="244" y="84">sounds most like you</text></g>
+              <g class="node" id="n-2"><rect class="box" x="230" y="124" width="170" height="44" rx="6"/><text class="t" x="244" y="143">candidate B</text><text class="s" x="244" y="158">0.91 similar on paper</text></g>
+              <g class="node" id="n-3"><rect class="box" x="230" y="198" width="170" height="44" rx="6"/><text class="t" x="244" y="217">candidate C</text><text class="s" x="244" y="232">a good fit, not the top</text></g>
+
+              <text class="t" x="430" y="70" id="r-1a">#1</text><text class="t" x="560" y="70" id="r-1b">#47</text>
+              <text class="t" x="430" y="144" id="r-2a">#2</text><text class="t" x="560" y="144" id="r-2b">–</text>
+              <text class="t" x="430" y="218" id="r-3a">#3</text><text class="t" x="560" y="218" id="r-3b">#2</text>
+
+              <g class="tag-pill bad" id="p-1"><rect x="430" y="78" width="78" height="20" rx="10"/><text x="469" y="92" text-anchor="middle">no reply</text></g>
+              <g class="tag-pill bad" id="p-2"><rect x="430" y="152" width="230" height="20" rx="10"/><text x="545" y="166" text-anchor="middle">kids: yes vs never · not scored</text></g>
+              <g class="tag-pill good" id="p-3"><rect x="430" y="226" width="100" height="20" rx="10"/><text x="480" y="240" text-anchor="middle">both say yes</text></g>
+
+              <circle class="chip" id="chip" r="5" cx="-20" cy="-20"/>
+
+              <text class="h" x="20" y="282">MUTUAL ACCEPTANCE, AS REPORTED IN THE ARTICLE</text>
+              <g class="bar-row" id="bar-0"><text class="s" x="20" y="304">similarity only</text><rect class="bar-track" x="130" y="295" width="160" height="10"/><rect class="bar" x="130" y="295" width="0" height="10" fill="url(#st-grey)" data-w="35"/><text class="t" x="298" y="304">22%</text></g>
+              <g class="bar-row" id="bar-1"><text class="s" x="350" y="304">+ dealbreakers</text><rect class="bar-track" x="460" y="295" width="160" height="10"/><rect class="bar" x="460" y="295" width="0" height="10" fill="url(#st-grey)" data-w="56"/><text class="t" x="628" y="304">35%</text></g>
+              <g class="bar-row" id="bar-2"><text class="s" x="20" y="323">+ mutual match</text><rect class="bar-track" x="130" y="314" width="160" height="10"/><rect class="bar" x="130" y="314" width="0" height="10" fill="url(#st-hot)" data-w="109"/><text class="t" x="298" y="323">68%</text></g>
+              <text class="verdict" x="350" y="323" id="verdict"><tspan data-v-label>chance both say yes </tspan><tspan class="v" data-v>≈ 10%</tspan></text>
+            </svg></div>
+            <div class="ctl-row">
+              <div class="pills" role="group" aria-label="jump to a step">
+                <button type="button" class="pill" data-step="0" aria-pressed="true">best match</button>
+                <button type="button" class="pill" data-step="1" aria-pressed="false">dealbreakers first</button>
+                <button type="button" class="pill" data-step="2" aria-pressed="false">mutual match</button>
+              </div>
+              <div class="ctls">
+                <button type="button" class="ctl" data-prev aria-label="previous step"><svg viewBox="0 0 12 12"><path d="M8.5 1.5v9L2.5 6z"/></svg></button>
+                <button type="button" class="ctl" data-pause aria-label="pause or play"><svg viewBox="0 0 12 12" data-i-pause><path d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"/></svg></button>
+                <button type="button" class="ctl" data-next aria-label="next step"><svg viewBox="0 0 12 12"><path d="M3.5 1.5v9l6-4.5z"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <figcaption><b>Your best match is not the match that works.</b> One person, three candidates, three ways of choosing who to introduce. The top-ranked candidate ranks you 47th. The pair that works is the one where each is near the top of the other's list.</figcaption>
+        </figure>
+
+
+  <h2>Constraints</h2>
+  <ul class="lines">
+    <li><b>Two sides.</b> One person's interest says nothing about whether it is returned.</li>
+    <li><b>Expensive errors.</b> A mismatch on children, commitment or trust cannot be outvoted by shared hobbies.</li>
+    <li><b>Little stated data.</b> Surveys on dating apps are finished about 30% of the time.</li>
+    <li><b>No outcome labels at launch.</b> There were no accept and reject decisions to learn from on day one.</li>
+    <li><b>A latency budget.</b> Every added stage has to be paid for in response time.</li>
+  </ul>
+
+  <h2>Similarity hides dealbreakers</h2>
+  <p>The baseline embedded each profile as a vector and searched for the nearest thirty. It was fast, and it understood that someone who loves hiking and an outdoor enthusiast are alike. It also gave a similarity of 0.91 to a lawyer who wants children and monogamy and a consultant who wants neither. A single score has nowhere to put a hard no.</p>
+  <p>The fix was to stop asking one number to do everything. Each person is described by 26 structured features in three groups: core values, personality traits and lifestyle preferences. Every pair of values has a graded distance from 0 for identical to 1 for opposed. Four of the core values act as hard filters with a maximum distance each: relationship timeline, commitment style, family plans and trust boundaries. A pair that fails any one is dropped before any score is computed.</p>
+  <p>Pairs that pass are scored on three signals: 0.25 for text similarity, 0.15 for visual signals and 0.60 for the structured features. Those weights came from a grid search over past accept and reject decisions. With filters and features in place, mutual acceptance rose from 22% to 35%.</p>
+
+  <h2>People will not fill in a survey</h2>
+  <p>Structured features are only useful if you have them, and people come to a dating app to meet someone, not to answer questions. So the features are read from conversations the person is already having with the app: at onboarding, after turning a match down, after accepting one, and after a date.</p>
+  <p>Someone who says they want to marry within two or three years gets a marriage-focused value on relationship timeline. Someone who turns a match down over career focus has their weight on lifestyle balance raised. A language model does the extraction against a fixed list of allowed values, at about two cents a person. Coverage of the features went from about 30% with surveys to 85%.</p>
+  <p>Photos get the same treatment. Raw image embeddings said two beach photos were 0.94 alike when one was a luxury trip and the other a local weekend. A multimodal model reads what the photos signal instead: activity level, presentation, social context.</p>
+
+  <h2>One set of weights fits nobody</h2>
+  <p>With one global weight per feature, intellectual connection counted 7.0 for everyone. For one person it was a dealbreaker near 10. For another it was a nice-to-have near 2.</p>
+  <p>Each person now has their own weights in three tiers: dealbreaker, important and nice-to-have. The weights are learned from three sources, and the sources are not equal. What someone says at onboarding is a guess about themselves. An accept or a reject with a reason is stronger. What they say after meeting in person is the strongest. One person's weight on intellectual connection moved from 5.0 to 7.5 to 9.0 across those three.</p>
+  <p>A side effect matters for the next step. Because the weights differ, the score from A to B and the score from B to A differ too. One pair scored 0.45 in one direction and 0.82 in the other.</p>
+
+  <h2>Rank for the pair, not the person</h2>
+  <p>Even with better scores, the system was still handing each person the top of their own list. Among matches one person accepted, the other accepted back only 35% of the time.</p>
+  <p>The last change was to choose pairs, not candidates. Each person ranks the candidates with their own weights. Only pairs where each is in the other's top ten are kept. Each kept pair gets a probability that both say yes, which is the product of two terms that fall as rank falls. Pairs are sorted by that probability and assigned greedily, one match per person.</p>
+  <p>This borrows the idea behind stable matching without its machinery. There is no propose-and-reject cycle and no guarantee of stability, and treating the two decisions as independent is a simplification. It was still well calibrated. When the predicted chance was 0.80, about 80% of those pairs accepted each other.</p>
+
+  <h2>Outcome</h2>
+  <div class="tablew"><table>
+    <thead><tr><th scope="col">Stage</th><th scope="col" class="n">Mutual acceptance</th><th scope="col" class="n">p95 latency</th></tr></thead>
+    <tbody>
+      <tr><td>Vector search only</td><td class="n">22%</td><td class="n">180 ms</td></tr>
+      <tr><td>Plus features, visual signals and hard filters</td><td class="n">35%</td><td class="n">450 ms</td></tr>
+      <tr class="hot"><td>Plus per-person weights and bidirectional matching</td><td class="n">68%</td><td class="n">1,200 ms</td></tr>
+    </tbody>
+  </table></div>
+  <p class="scope">Figures are as reported in the article, measured on the app's own accept and reject decisions. Dealbreaker violations in shown matches went to zero once the hard filters ran first.</p>
+
+  <h2>What I would do differently</h2>
+  <p>Per-person weights and bidirectional matching shipped together, so the jump from 35% to 68% cannot be split between them. I would ship them one at a time and measure each.</p>
+  <p>I would plan for new users earlier. A person with no feedback yet has only their onboarding answers, which is the weakest of the three sources. And I would treat the 1,200 ms as a debt. Ranking in both directions grows with the number of people times the number of candidates, so it needs a cheaper retrieval step before the user base grows much further.</p>
+
+  <h2>What is next</h2>
+  <p>A feature graph, planned and not built, that links people and features so that a new person can borrow weights from people like them. Fine-tuning the embedding model on accept and reject pairs, now that those exist. And an open question I cannot answer from logs: whether a trait like intellectual connection causes good matches or only travels with them. That needs an experiment.</p>
+  <p>The method is also written as tested code, with simulated people in place of real ones, in <a class="tlink" href="https://github.com/Mohit-Dhawan98/wavelength" target="_blank" rel="noopener">wavelength<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>.</p>
+
+  <div class="next">
+    <div><span>Next</span><a href="https://providio.ai/blogs/intro-to-providio-os" target="_blank" rel="noopener">Providio OS, the team's public write-up</a></div>
+    <div><span>Contact</span><a href="mailto:mohit.dhawan2510@gmail.com?subject=Project%20enquiry">Write to me</a></div>
+  </div>
+</main>
+<footer class="foot"><span>Mohit Dhawan, Bengaluru</span><span><a href="../index.html">Home</a></span></footer>
+
+<script src="../js/site.js"></script>
+<script src="../js/scene.js"></script>
+</body>
+</html>

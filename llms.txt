@@ -1,0 +1,27 @@
+# Mohit Dhawan
+
+Data scientist and ML engineer in Bengaluru. Founding ML engineer at Providio. Works across three fields: agentic AI, NLP, and classical ML and statistics.
+
+Contact: mohit.dhawan2510@gmail.com
+LinkedIn: https://www.linkedin.com/in/mohit-dhawan98/
+GitHub: https://github.com/Mohit-Dhawan98
+Writing: https://themlnerd.substack.com
+
+## Fields
+
+- Agentic AI: harnesses, tools and memory around a model, and the evaluation that says whether a change helped. Open work: sre-incident-env, 8 production incident patterns, 4 frontier models baselined.
+- NLP: entity recognition, document parsing, classification, semantic similarity, fine-tuned language models.
+- Classical ML and statistics: two-sided matching, price elasticity, demand forecasting, root-cause models, A/B tests.
+
+## Work
+
+- Providio, Founding ML engineer, now. Providio OS, an agent platform for airline revenue and marketing analytics. Public write-up: https://providio.ai/blogs/intro-to-providio-os
+- Prismforce, Senior Data Scientist, 2025 to 2026. Matching job demand to people with a skill recognition model and a skill-job knowledge graph: 30% less client onboarding time, matching over 40% faster and 70% more accurate. A resume and job description parser.
+- CommerceIQ, Data Scientist 2, 2022 to 2024. Automated product classification: 80% less onboarding time, $3M additional revenue. SKU matching across retailers: 80% fewer manual operations, 40% less matching load. A universal classifier as a service. A sales root-cause model: $200K additional ARR.
+- Reliance Jio, Data Scientist, 2021 to 2022. Price elasticity API for AJIO: 15% better sales-to-inventory ratio. Demand forecasting: 3% better accuracy. Dynamic pricing experiments. SHAP-based explanation of black-box models, published as a conference paper.
+- Independent. From best match to mutual match: mutual acceptance from 22% to 68% for an AI matchmaking app. sre-incident-env, resolve-free-mcp, Recall.
+
+## Pages
+
+- /index.html: home
+- /work/mutual-match.html: case study, from best match to mutual match
