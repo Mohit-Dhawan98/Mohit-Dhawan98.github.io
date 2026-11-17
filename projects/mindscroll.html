@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MindScroll · Mohit Dhawan</title>
+<meta name="description" content="Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries.">
+<link rel="canonical" href="https://mohit-dhawan98.github.io/projects/mindscroll.html">
+<meta property="og:url" content="https://mohit-dhawan98.github.io/projects/mindscroll.html">
+<meta property="og:image" content="https://mohit-dhawan98.github.io/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mohit Dhawan: an error surface in square cells, with an orange path of gradient descent ending at its lowest point.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="https://mohit-dhawan98.github.io/manifest.json">
+<link rel="alternate" type="text/markdown" href="https://mohit-dhawan98.github.io/llms.txt">
+<meta property="og:title" content="MindScroll · Mohit Dhawan">
+<meta property="og:description" content="Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#eceae4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add("js");
+  try {
+    var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") d.setAttribute("data-theme", t);
+    if (localStorage.getItem("sound") === "off") d.classList.add("sound-off");
+  } catch (e) {}
+  setTimeout(function () { if (!window.motion) d.classList.remove("js"); }, 3000);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap"></noscript>
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="bar band">
+  <nav class="nav" aria-label="Site">
+    <a class="nav-name" href="../index.html">Mohit Dhawan</a>
+    <div class="nav-links">
+      <a href="../help/index.html">How I help</a>
+      <a href="../work/index.html" aria-current="page">Work</a>
+      <a href="../contact/index.html">Contact</a>
+      <button type="button" class="snd" data-sound-toggle aria-pressed="true" aria-label="Interface sounds"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 3V7l-4 3H4z"/><path class="w1" d="M15 9.5a3.5 3.5 0 0 1 0 5"/><path class="w2" d="M17.5 7a7 7 0 0 1 0 10"/><path class="x" d="M15.5 9.5l5 5m0-5l-5 5"/></svg><span data-sound-label>Sound on</span></button>
+      <button type="button" class="thm" data-theme-toggle aria-label="Dark theme for the page" aria-pressed="false"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4L7 17m10-10l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </div>
+  </nav><span class="read-line" aria-hidden="true"></span>
+</header><canvas class="seam" aria-hidden="true"></canvas>
+<main class="page dd project" id="main" data-voice-page="project:mindscroll">
+  <nav class="back-row" aria-label="Back and breadcrumb"><a class="back" href="../work/index.html#p-mindscroll" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg><span>Work</span></a><p class="crumb"><a href="../index.html">Home</a><i aria-hidden="true">/</i> <a href="../work/index.html">Work</a><i aria-hidden="true">/</i> <span aria-current="page">MindScroll</span></p></nav>
+  <h1 style="view-transition-name:p-mindscroll">MindScroll</h1>
+  <p class="lede">Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries.</p>
+  <dl class="facts"><div><dt>Kind</dt><dd>NLP</dd></div><div><dt>Where</dt><dd>Open source</dd></div><div><dt>Status</dt><dd>offline, being rebuilt for the phone</dd></div><div><dt>Note</dt><dd>The hosted version is offline. It runs locally, and it is being rebuilt for the phone.</dd></div><div><dt>Links</dt><dd><a class="tlink" href="https://github.com/Mohit-Dhawan98/MindScroll" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></dd></div></dl>
+    <h2>The problem</h2>
+  <p>Finishing a book is not the same as remembering it. Notes and highlights are rarely looked at again.</p>
+  <h2>What was built</h2>
+  <p>A pipeline that reads a PDF or EPUB, finds its chapters, and writes flashcards, then quizzes and summaries from those cards, with a web app that tracks what each reader has learned.</p>
+  <div class="next">
+    <div><span>Next project</span><a href="../work/mutual-match.html">From best match to mutual match</a></div>
+    <div><span>Contact</span><a href="../contact/index.html">Write to me</a></div>
+  </div>
+  <p class="back-foot"><a class="back" href="../work/index.html#p-mindscroll" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg><span>Back to Work</span></a></p>
+</main>
+<a class="back-fab" href="../work/index.html#p-mindscroll" data-back aria-label="Back to Work"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></a>
+<footer class="foot"><span>Mohit Dhawan, Bengaluru</span><span><a href="mailto:mohit.dhawan2510@gmail.com?subject=Project%20enquiry">Write to me</a></span></footer>
+<script>window.SITE_ROOT = "../";</script>
+<script src="../js/site.js"></script>
+</body>
+</html>

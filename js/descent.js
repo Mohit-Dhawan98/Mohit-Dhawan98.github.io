@@ -1,235 +1,301 @@
-/* The home hero: a map of a model's error, seen from above, drawn in small square cells (five greys, orange and white).
-   Bright is high error, dark is low. Contour rings close around each low point.
-   An orange path is gradient descent: plain steps downhill, each as long as the slope is steep, so it slows as the ground flattens.
+/* The home hero: a model's error drawn as land in perspective, and painted the way photo-to-paint paints a photo.
+   The ground is cut into regions by height, each outlined and numbered; "paint" fills the regions with a small palette
+   of flat colours, lowest number first, and takes them off again. Four surfaces can be stepped through, each making
+   one point about gradient descent. Orange is kept for the run.
 
-   The map never moves. A click starts a run where the pointer is. The whole path is worked out at once, then played back
-   over four to six seconds: a white head, an orange trail, a square where it started, a ring and a label where it settled.
-   The readout follows the run: steps, error, and a small curve of error against steps.
-
-   Runs only while the hero is on screen and the tab is visible, at about 30 frames a second, never wider than 400 cells.
-   With reduced motion it draws one finished, labelled run, and a click draws its finished path at once.
-   No images, no libraries. */
+   A click starts gradient descent where the pointer is: the path is worked out at once and played back over four to
+   six seconds, a bright head ahead of a fading trail, the steps shortening as the ground flattens, a pulse and a small
+   square where it settles. The camera never moves. One run at a time; the readout follows it.
+   Draws only while on screen, the tab is visible and something moves, at about 30 frames a second, never wider than
+   400 cells. With reduced motion every change is drawn finished. The palette follows the page theme. */
 (function () {
   "use strict";
   const hero = document.querySelector("[data-descent]"); if (!hero) return;
   const mo = window.motion || {}, reduced = !!mo.reduced, sound = mo.sound || { play() {} };
-  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const cv = hero.querySelector(".hero-cv"), ctx = cv.getContext("2d", { alpha: false });
-  const layer = hero.querySelector(".hero-labels"), hint = hero.querySelector(".hud-hint");
-  const R = { who: hero.querySelector("[data-run-who]"), steps: hero.querySelector("[data-run-steps]"), err: hero.querySelector("[data-run-err]"), state: hero.querySelector("[data-run-state]"), curve: hero.querySelector("[data-run-curve]") };
+  const $ = s => hero.querySelector(s);
+  const R = { steps: $("[data-run-steps]"), err: $("[data-run-err]"), curve: $("[data-run-curve]"), cue: $("[data-run-cue]"), verdict: $("[data-run-verdict]"), point: $("[data-surface-point]"), name: $("[data-surface-name]"), paint: $("[data-paint]") };
+  const pathTag = $('[data-info="path"]'), groundTag = $('[data-info="ground"]');
 
+  /* ---- Palettes. 0 ground, 1-4 more ink, 5 orange, 6 highlight, 7 outline, 8-14 the paints, lowest ground first ---- */
+  const PALS = {
+    dark: ["#000000", "#1c1c1c", "#3a3a3a", "#8a8a8a", "#e8e8e8", "#ff5904", "#ffffff", "#7c7c7c",
+           "#243241", "#34505c", "#4f675a", "#7d7d5c", "#a48d63", "#c7b591", "#e9e2d2"],
+    light: ["#eceae4", "#e0ddd5", "#cbc7bd", "#7b7870", "#2a2926", "#f05000", "#121211", "#8f8b82",
+            "#2f4356", "#476877", "#6f8a76", "#a3a27a", "#c2a774", "#dcccab", "#f7f2e6"],
+  };
+  const hex32 = h => { const n = parseInt(h.slice(1), 16); return (255 << 24 | (n & 255) << 16 | (n >> 8 & 255) << 8 | n >> 16) >>> 0; };
+  let PAL32;
+  const isDark = () => getComputedStyle(document.documentElement).colorScheme.indexOf("dark") >= 0;
+  function setPalette() { PAL32 = new Uint32Array(PALS[isDark() ? "dark" : "light"].map(hex32)); }
+  setPalette();
   const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) / 16);
-  const PAL = [[0, 0, 0], [38, 38, 38], [84, 84, 84], [146, 146, 146], [232, 232, 232], [255, 89, 4], [255, 255, 255]];
-  const PAL32 = new Uint32Array(PAL.map(([r, g, b]) => (255 << 24 | b << 16 | g << 8 | r) >>> 0));
-  const ORANGE = 5, WHITE = 6;
+  const ORANGE = 5, HI = 6, LINE = 7, PAINT0 = 8, BANDS = 7;
 
-  /* ---- The surface. Coordinates: v runs 0..1 down the hero, u runs 0..A across it (A is width over height), so distance is the same both ways. ---- */
-  let A = 1.6, basins = [], lo = 0, hi = 1, best = null;
-  function layout(narrow) {
-    return narrow
-      ? [{ x: 0.6, y: 0.63, d: 1, s: 0.11 }, { x: 0.2, y: 0.74, d: 0.55, s: 0.065 }, { x: 0.86, y: 0.5, d: 0.45, s: 0.06 }]
-      : [{ x: 0.665, y: 0.42, d: 1, s: 0.2 }, { x: 0.43, y: 0.7, d: 0.55, s: 0.125 }, { x: 0.9, y: 0.68, d: 0.5, s: 0.115 }];
+  /* ---- Four surfaces on one square of ground. u, v run 0..1; v = 1 is far from the viewer ---- */
+  const G = (u, v, cu, cv_, s) => Math.exp(-((u - cu) ** 2 + (v - cv_) ** 2) / (2 * s * s));
+  const SURFACES = [
+    { name: "one bowl", point: "One bowl: from any start, descent reaches the bottom.", start: [0.24, 0.9],
+      h: (u, v) => (u - 0.52) ** 2 + (v - 0.5) ** 2 + 0.006 * Math.sin(u * 19) * Math.cos(v * 17) },
+    { name: "two valleys", point: "Two valleys with a saddle between: where a run starts decides where it ends.", start: [0.5, 0.92],
+      h: (u, v) => 0.55 * ((u - 0.5) ** 2 + (v - 0.5) ** 2) - 0.2 * G(u, v, 0.3, 0.52, 0.13) - 0.17 * G(u, v, 0.72, 0.48, 0.13) },
+    { name: "a dip beside the lowest point", point: "A shallow dip beside the true minimum: descent can stop short of it.", start: [0.16, 0.86],
+      h: (u, v) => 0.5 * ((u - 0.5) ** 2 + (v - 0.5) ** 2) - 0.22 * G(u, v, 0.64, 0.46, 0.14) - 0.07 * G(u, v, 0.28, 0.62, 0.07) + 0.05 * G(u, v, 0.43, 0.56, 0.06) },
+    { name: "bumpy ground", point: "Bumpy ground: small dips catch a run early.", start: [0.82, 0.9],
+      h: (u, v) => 0.6 * ((u - 0.5) ** 2 + (v - 0.5) ** 2) + 0.022 * Math.sin(u * 23 + 1) * Math.sin(v * 21 + 2) + 0.012 * Math.cos(u * 41 - v * 37) },
+  ];
+  const N = 384, M = N - 1, HMAX = 230;
+  let Hm, Bm, Em, Lm, labels, gmin, cur = 0;
+  const cache = [];
+  function build(k) {
+    if (cache[k]) return cache[k];
+    const S = SURFACES[k], H = new Float32Array(N * N); let lo = 1e9, hi = -1e9;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const h = S.h(x / M, y / M); H[y * N + x] = h; if (h < lo) lo = h; if (h > hi) hi = h; }
+    let mn = 1e9;
+    for (let i = 0; i < N * N; i++) { H[i] = (H[i] - lo) / (hi - lo) * HMAX; if (H[i] < mn) mn = H[i]; }
+    const B = new Uint8Array(N * N), E = new Uint8Array(N * N), L = new Uint8Array(N * N);
+    for (let i = 0; i < N * N; i++) B[i] = Math.min(BANDS - 1, Math.pow(H[i] / HMAX, 0.8) * BANDS | 0);   // a little more detail low down
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const i = y * N + x, b = B[i];
+      if ((x < M && B[i + 1] !== b) || (y < M && B[i + N] !== b)) E[i] = 1;
+      const gx = H[y * N + Math.min(M, x + 1)] - H[y * N + Math.max(0, x - 1)], gy = H[Math.min(M, y + 1) * N + x] - H[Math.max(0, y - 1) * N + x];
+      L[i] = Math.max(0, Math.min(255, 128 + (gx * -0.9 + gy * 0.8) * 22));
+    }
+    // One number per region: the connected areas of one band, labelled near their middle.
+    const comp = new Int32Array(N * N).fill(-1), q = new Int32Array(N * N), lab = [];
+    for (let s0 = 0; s0 < N * N; s0++) {
+      if (comp[s0] >= 0) continue;
+      const b = B[s0], id = lab.length; let qh = 0, qt = 0, sx = 0, sy = 0; q[qt++] = s0; comp[s0] = id;
+      while (qh < qt) { const i = q[qh++], x = i % N, y = i / N | 0; sx += x; sy += y;
+        if (x > 0 && comp[i - 1] < 0 && B[i - 1] === b) { comp[i - 1] = id; q[qt++] = i - 1; } if (x < M && comp[i + 1] < 0 && B[i + 1] === b) { comp[i + 1] = id; q[qt++] = i + 1; }
+        if (y > 0 && comp[i - N] < 0 && B[i - N] === b) { comp[i - N] = id; q[qt++] = i - N; } if (y < M && comp[i + N] < 0 && B[i + N] === b) { comp[i + N] = id; q[qt++] = i + N; } }
+      let cx = sx / qt, cy = sy / qt, best = q[0], bd = 1e9;
+      for (let k2 = 0; k2 < qt; k2 += 7) { const i = q[k2], d = (i % N - cx) ** 2 + ((i / N | 0) - cy) ** 2; if (d < bd) { bd = d; best = i; } }
+      lab.push({ x: best % N, y: best / N | 0, n: b + 1, area: qt });
+    }
+    return (cache[k] = { H, B, E, L, labels: lab.filter(l => l.area > 900), gmin: mn });
   }
-  function raw(u, v) {
-    const g = basins[0], du = u - g.u, dv = v - g.v;
-    let h = 0.42 * (du * du + dv * dv) + 0.02 * Math.sin(3.1 * u + 1) * Math.cos(4.3 * v + 2);
-    for (const b of basins) { const x = u - b.u, y = v - b.v; h -= b.d * Math.exp(-(x * x + y * y) / (2 * b.s * b.s)); }
-    return h;
+  function use(k) { cur = k; const s = build(k); Hm = s.H; Bm = s.B; Em = s.E; Lm = s.L; labels = s.labels; gmin = s.gmin; if (R.name) R.name.textContent = (k + 1) + "/4 · " + SURFACES[k].name; if (R.point) R.point.textContent = SURFACES[k].point; }
+  const inside = (x, y) => x >= 0 && y >= 0 && x <= M && y <= M;
+  const at = (x, y) => {
+    x = Math.max(0, Math.min(M - 0.001, x)); y = Math.max(0, Math.min(M - 0.001, y));
+    const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, i = y0 * N + x0;
+    const a = Hm[i], b = Hm[i + 1], c = Hm[i + N], d = Hm[i + N + 1];
+    return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy;
+  };
+  const err = h => 0.02 + 0.98 * (h - gmin) / (HMAX - gmin);
+
+  /* ---- The camera: high, looking down at the square of ground, which sits right of the text on a wide screen ---- */
+  const CAM_H = 520, ZFAR = 1100;
+  let F = 0.95;
+  let camX = 0, camY = 0, K = 0.42, HOR = 0.12;
+  function place() {
+    const narrow = hero.clientWidth < 640;
+    K = narrow ? 0.42 : 0.6; HOR = narrow ? 0.2 : 0.1; F = narrow ? 0.62 : 0.95;
+    camX = narrow ? N * 0.5 : 110; camY = narrow ? -300 : -310;
   }
-  const err = (u, v) => 0.03 + 0.97 * (raw(u, v) - lo) / (hi - lo);          // "error": 0.03 at the lowest point, 1 at the highest on screen
 
   /* ---- Canvas state ---- */
-  let cw = 0, ch = 0, cell = 4, img, img32, base, running = false, visible = false, raf = 0, last = 0;
-  let px = -1, py = -1, inside = false, runs = [], runId = 0, shown = false;
-  const toUV = (cx, cy) => [cx / cw * A, cy / ch], toCell = (u, v) => [u / A * cw, v * ch];
+  let cw = 0, ch = 0, cell = 4, img, img32, lev, zbuf, pkx, pky, ybuf;
+  let running = false, visible = false, raf = 0, last = 0, run = null, shown = false;
+  let paint = 0, paintTo = 0;                                         // 0 is the numbered outline, 1 the painted surface
 
   function size() {
     const w = hero.clientWidth, h = hero.clientHeight; if (!w || !h) return;
-    const narrow = w < 640;
-    cell = narrow ? 3 : Math.max(4, Math.ceil(w / 400));
+    cell = w < 640 ? 3 : Math.max(4, Math.ceil(w / 400));
     const nw = Math.ceil(w / cell), nh = Math.ceil(h / cell);
     if (nw === cw && nh === ch) return;
     cw = nw; ch = nh; cv.width = cw; cv.height = ch; cv.style.width = cw * cell + "px"; cv.style.height = ch * cell + "px";
     hero.style.setProperty("--cell", cell + "px");
-    img = ctx.createImageData(cw, ch); img32 = new Uint32Array(img.data.buffer); base = new Uint8Array(cw * ch);
-    A = cw / ch; basins = layout(narrow).map(b => ({ u: b.x * A, v: b.y, d: b.d, s: b.s }));
-    build();
-    runs.forEach(r => r.labels.forEach(l => l.remove())); runs = [];
-    staticLabels();
-    if (reduced || shown) { const r = start(...demoStart(), false); finish(r); } else if (visible) demo();
-    draw(performance.now());
+    img = ctx.createImageData(cw, ch); img32 = new Uint32Array(img.data.buffer);
+    lev = new Uint8Array(cw * ch); bb = new Uint8Array(cw * ch); zbuf = new Float32Array(cw * ch); pkx = new Float32Array(cw * ch); pky = new Float32Array(cw * ch); ybuf = new Int32Array(cw);
+    place();
+    if (!run) { run = start(...demoStart(), false); if (reduced) finish(run); }
+    else if (run.done) placeTag(run);
+    draw(performance.now()); setRun();
   }
 
-  /* Draw the map once into `base`: brightness is height, with relief from a light at the upper left and a bright line at every contour.
-     It is dimmed under the page's own text and sinks to black along the bottom edge. */
-  function build() {
-    const H = new Float32Array(cw * ch); lo = 1e9; hi = -1e9;
-    for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) { const h = raw((x + 0.5) / cw * A, (y + 0.5) / ch); H[y * cw + x] = h; if (h < lo) lo = h; if (h > hi) hi = h; }
-    best = { h: 1e9 };
-    for (const b of basins) {                                   // where each basin really bottoms out, and which is lowest
-      let u = b.u, v = b.v;
-      for (let k = 0; k < 400; k++) { const e = 1e-4, gx = (raw(u + e, v) - raw(u - e, v)) / (2 * e), gy = (raw(u, v + e) - raw(u, v - e)) / (2 * e); u -= 0.0006 * gx; v -= 0.0006 * gy; }
-      b.mu = u; b.mv = v; b.h = raw(u, v); if (b.h < best.h) best = b;
-    }
-    lo = best.h;
-    const hr = hero.getBoundingClientRect(), dim = [];
-    hero.querySelectorAll("h1, .hero-id, .hero-key, .hero-bl, .hero-br").forEach(el => { const r = el.getBoundingClientRect(); if (r.width) dim.push([(r.left - hr.left) / cell, (r.top - hr.top) / cell, (r.right - hr.left) / cell, (r.bottom - hr.top) / cell]); });
-    const STEP = 0.055, pad = 26 / cell * 4;
-    for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
-      const i = y * cw + x, h = H[i], n = (h - lo) / (hi - lo);
-      const hx = H[y * cw + Math.min(cw - 1, x + 1)], hy = H[Math.min(ch - 1, y + 1) * cw + x];
-      const gx = (hx - h) * ch, gy = (hy - h) * ch;                       // slope per unit of v
-      let s = 0.02 + 1.75 * Math.pow(n, 1.15) + Math.max(-0.7, Math.min(0.7, (gx * 0.62 + gy * 0.5) * 0.45));   // lit from the upper left
-      const band = Math.floor(n / STEP);
-      if (band !== Math.floor((hx - lo) / (hi - lo) / STEP) || band !== Math.floor((hy - lo) / (hi - lo) / STEP)) s = Math.min(4, s + 1.7);   // a contour line
-      let m = 1;
-      for (const [x0, y0, x1, y1] of dim) {
-        const dx = Math.max(x0 - x, 0, x - x1), dy = Math.max(y0 - y, 0, y - y1), d = Math.hypot(dx, dy) / pad;
-        m = Math.min(m, 0.16 + 0.84 * Math.min(1, d));
+  function proj(x, y, h) {
+    const z = y - camY; if (z < 4) return null;
+    return [((x - camX) / (z * F) + 1) * 0.5 * cw, (CAM_H - h) * K * ch / z + HOR * ch, z];
+  }
+
+  /* ---- The ground, front to back, one screen column at a time. Outlines are found on screen, so they stay unbroken at any distance ---- */
+  let bb;
+  function ground(now) {
+    ybuf.fill(ch); zbuf.fill(1e9); lev.fill(0); pkx.fill(NaN); bb.fill(255);
+    const sc = K * ch, z0 = Math.max(8, -camY), z1 = Math.min(ZFAR, M - camY);
+    // how far the paint has come: each band fills in turn, lowest number first
+    const amt = new Float32Array(BANDS); for (let b = 0; b < BANDS; b++) amt[b] = Math.max(0, Math.min(1, paint * (1 + BANDS * 0.12) - b * 0.12));
+    for (let z = z0; z < z1; z += z < 600 ? 1 : 1.5) {
+      const half = z * F, step = half * 2 / cw, wy = camY + z, iy = Math.min(M, wy | 0);
+      const inv = sc / z, fog = Math.max(0.3, 1 - (z - z0) / (ZFAR * 1.2));
+      let wx = camX - half + step * 0.5;
+      for (let i = 0; i < cw; i++, wx += step) {
+        if (wx < 0 || wx > M) continue;
+        const idx = iy * N + (wx | 0);
+        let sy = (CAM_H - Hm[idx]) * inv + HOR * ch | 0;
+        let top = ybuf[i]; if (sy >= top) continue; if (sy < 0) sy = 0;
+        if (top === ch) top = Math.min(ch, sy + 4);                     // the front edge of the board: a thin lip, not a wall
+        const band = Bm[idx], light = Lm[idx] / 255, a = amt[band];
+        for (let y = sy, k = sy * cw + i; y < top; y++, k += cw) {
+          const bay = BAYER[(y & 3) << 2 | i & 3];
+          lev[k] = bay > fog ? 0 : bay < a ? PAINT0 + band : bay < (1 - light) * 0.5 ? 1 : 0;   // painted flat, or paper with a little shading
+          bb[k] = bay > fog * 1.3 ? 254 : band; zbuf[k] = z; pkx[k] = wx; pky[k] = wy;
+        }
+        ybuf[i] = sy;
       }
-      const fy = y / ch; if (fy > 0.84) m *= Math.max(0, 1 - (fy - 0.84) / 0.14);
-      const ty = y * cell; if (ty < 76) m *= 0.15 + 0.85 * ty / 76;                       // quiet behind the nav
-      const l = s * m + BAYER[(y & 3) << 2 | x & 3] | 0;
-      base[i] = l < 0 ? 0 : l > 4 ? 4 : l;
+    }
+    for (let y = 0; y < ch - 1; y++) for (let x = 0, k = y * cw; x < cw - 1; x++, k++) {      // the outline of every region
+      const b = bb[k]; if (b > 250) continue;
+      const r = bb[k + 1], d = bb[k + cw];
+      if ((r !== b && r < 250) || (d !== b && d < 250)) lev[k] = amt[b] > 0.5 ? 2 : LINE;
+    }
+    // the numbers, where they are still unpainted
+    for (const l of labels) {
+      if (amt[l.n - 1] > 0.6) continue;
+      const p = proj(l.x, l.y, Hm[l.y * N + l.x]); if (!p || !seen(p[0], p[1], p[2])) continue;
+      digit(String(l.n), p[0] - 1, p[1] - 2);
     }
   }
+  const DIG = { 1: "010110010010111", 2: "111001111100111", 3: "111001111001111", 4: "101101111001001", 5: "111100111001111", 6: "111100111101111", 7: "111001010010010" };
+  function digit(s, x, y) { const g = DIG[s]; if (!g) return; for (let k = 0; k < 15; k++) if (g[k] === "1") put(x + k % 3, y + (k / 3 | 0), LINE); }
 
-  /* ---- A run: gradient descent, worked out in full, then played back ---- */
-  function path(u, v) {
-    const pts = [[u, v, err(u, v)]], maxStep = 2 / ch, e = 0.5 / ch;
+  /* ---- A run: plain gradient descent, worked out in full, then played back ---- */
+  function path(x, y) {
+    const pts = [[x, y, at(x, y)]];
     for (let k = 0; k < 900; k++) {
-      const gx = (raw(u + e, v) - raw(u - e, v)) / (2 * e), gy = (raw(u, v + e) - raw(u, v - e)) / (2 * e);
-      let sx = -0.0016 * gx, sy = -0.0016 * gy; const len = Math.hypot(sx, sy);
-      if (len > maxStep) { sx *= maxStep / len; sy *= maxStep / len; }
-      if (Math.hypot(sx, sy) < 0.06 / ch) break;                          // the ground is flat: it has settled
-      const h0 = raw(u, v); let t = 1; while (t > 0.05 && raw(u + sx * t, v + sy * t) > h0) t /= 2;   // never a step uphill
+      const gx = (at(x + 1, y) - at(x - 1, y)) / 2, gy = (at(x, y + 1) - at(x, y - 1)) / 2;
+      let sx = -2.2 * gx, sy = -2.2 * gy; const len = Math.hypot(sx, sy);
+      if (len > 2.6) { sx *= 2.6 / len; sy *= 2.6 / len; }
+      if (Math.hypot(sx, sy) < 0.05) break;                           // the ground is flat: it has settled
+      const h0 = at(x, y); let t = 1; while (t > 0.05 && at(x + sx * t, y + sy * t) > h0) t /= 2;
       if (t <= 0.05) break;
-      u = Math.max(0, Math.min(A, u + sx * t)); v = Math.max(0, Math.min(1, v + sy * t));
-      pts.push([u, v, Math.min(pts[pts.length - 1][2], err(u, v))]);
+      x = Math.max(0, Math.min(M, x + sx * t)); y = Math.max(0, Math.min(M, y + sy * t)); pts.push([x, y, Math.min(pts[pts.length - 1][2], at(x, y))]);
     }
     return pts;
   }
-  function label(cls, html, u, v, side, left) {
-    const el = document.createElement("div"); el.className = "hl " + cls; el.innerHTML = html; layer.appendChild(el);
-    const [cx, cy] = toCell(u, v), W = hero.clientWidth, w = el.offsetWidth, h = el.offsetHeight;
-    let x = left ? cx * cell - w - 12 : cx * cell + 12, y = side === "below" ? cy * cell + 12 : cy * cell - h - 12;
-    if (x + w > W - 8) x = cx * cell - w - 12; if (x < 8) x = cx * cell + 12; if (x + w > W - 8) x = W - 8 - w; if (y < 72) y = cy * cell + 14;
-    el.style.left = x + "px"; el.style.top = y + "px"; return el;
-  }
-  const box = e => { const l = parseFloat(e.style.left) || 0, t = parseFloat(e.style.top) || 0; return { left: l, top: t, right: l + e.offsetWidth, bottom: t + e.offsetHeight }; };   // from the set position, not the rendered one, which may still be easing in
-  const hits = (a, b) => { const x = box(a), y = box(b); return x.left < y.right + 4 && y.left < x.right + 4 && x.top < y.bottom + 4 && y.top < x.bottom + 4; };
-  function staticLabels() {
-    layer.querySelectorAll(".hl-min").forEach(n => n.remove());
-    label("hl-min", "lowest point on the map", best.mu, best.mv, "below");
-  }
-  function start(u, v, byUser) {
-    const pts = path(u, v), n = pts.length - 1, r = { id: ++runId, pts, n, i: 0, user: byUser, t0: performance.now(), dur: Math.max(4500, Math.min(6000, n / 30 * 1000)), done: false, pulse: 0, labels: [] };
-    runs.forEach(o => { o.labels.forEach(l => l.remove()); o.labels = []; });   // only the newest run keeps its labels
-    runs.push(r); while (runs.length > 1) runs.shift();   // one run on the map at a time, so nothing unexplained is left on it
-    layer.querySelectorAll(".hl-min").forEach(n => n.hidden = false);
-    r.labels.push(label("hl-start", "started here · error " + pts[0][2].toFixed(2), u, v, "above"));
-    R.who.textContent = byUser ? "Your run" : "Example run"; R.state.textContent = "learning";
-    hint.textContent = byUser ? "Your run. Each step goes downhill; the steps shorten as the ground flattens." : "An example run: a model learning, one step at a time.";
-    hint.classList.remove("go"); readout(r);
+  function start(x, y, byUser) {
+    const pts = path(x, y), n = pts.length - 1;
+    const r = { pts, n, f: 0, i: 0, user: byUser, t0: performance.now(), dur: Math.max(4500, Math.min(6000, n / 30 * 1000)), done: false, pulse: -1e9 };
+    if (R.cue) R.cue.hidden = true;
+    pathTag.hidden = true; readout(r);
     return r;
   }
   function settle(r, now) {
-    r.done = true; r.i = r.n; r.pulse = now;
-    const [u, v, e] = r.pts[r.n], lowest = raw(u, v) - best.h < 0.02 * (hi - lo) && Math.hypot(u - best.mu, v - best.mv) < 0.06;
-    r.labels.push(label("hl-end", "<b>settled here</b> · error " + e.toFixed(2) + " · " + r.n + " steps<br>" + (lowest ? "It reached the lowest point on the map." : "A local dip, not the lowest point."), u, v, r.pts[0][1] < v ? "below" : "above", r.pts[0][0] > u));   // the label sits away from the path it ends
-    const endL = r.labels[1], startL = r.labels[0];
-    if (hits(endL, startL)) { const [su, sv] = r.pts[0]; startL.remove(); r.labels[0] = label("hl-start", startL.innerHTML, su, sv, "below"); if (hits(endL, r.labels[0])) r.labels[0].hidden = true; }   // labels never sit on each other
-    layer.querySelectorAll(".hl-min").forEach(n => { n.hidden = false; n.hidden = lowest || hits(endL, n); });
-    R.state.textContent = lowest ? "settled at the lowest point" : "settled in a dip, not the lowest"; readout(r);
-    hint.textContent = (fine ? "Click" : "Tap") + (r.user ? " somewhere else. Not every start reaches the lowest point." : " anywhere on the map: a model starts learning there."); hint.classList.add("go");
-    shown = true;
-    if (r.user) sound.play("land");
+    r.done = true; r.f = r.i = r.n; r.pulse = now; readout(r);
+    const lowest = r.pts[r.n][2] - gmin < HMAX * 0.02;
+    R.verdict.textContent = (r.user ? "Your run " : "This run ") + (lowest ? "reached the lowest point." : "stopped in a local dip, not the lowest point.");
+    placeTag(r); if (R.cue) R.cue.hidden = false; shown = true;
+    if (r.user) { sound.play("land"); voice(lowest ? "run:lowest" : "run:local"); }
   }
-  function finish(r) { settle(r, performance.now() - 5000); draw(performance.now()); }
+  function finish(r) { settle(r, performance.now() - 5000); }
   function readout(r) {
-    const p = r.pts[r.i]; R.steps.textContent = String(r.i).padStart(3, "0"); R.err.textContent = p[2].toFixed(2);
-    const top = Math.max(r.pts[0][2], 0.2), y = k => (20 - r.pts[k][2] / top * 18).toFixed(1), pts = [], stride = Math.max(1, r.n / 60 | 0);
-    for (let k = 0; k < r.i; k += stride) pts.push((k / r.n * 96).toFixed(1) + "," + y(k));
-    pts.push((r.i / Math.max(1, r.n) * 96).toFixed(1) + "," + y(r.i));
-    R.curve.setAttribute("points", pts.join(" "));
+    const p = r.pts[r.i]; R.steps.textContent = String(r.i).padStart(3, "0"); R.err.textContent = err(p[2]).toFixed(2);
+    const top = Math.max(err(r.pts[0][2]), 0.2), Y = k => (20 - err(r.pts[k][2]) / top * 18).toFixed(1), out = [], stride = Math.max(1, r.n / 60 | 0);
+    for (let k = 0; k < r.i; k += stride) out.push((k / r.n * 64).toFixed(1) + "," + Y(k));
+    out.push((r.i / Math.max(1, r.n) * 64).toFixed(1) + "," + Y(r.i));
+    R.curve.setAttribute("points", out.join(" "));
   }
-  // A start that is high, in clear view, and ends in the lowest basin: the first thing a visitor sees.
-  function demoStart() { const g = basins[0], narrow = hero.clientWidth < 640; return narrow ? [g.u - 0.12, g.v - 0.14] : [g.u - 0.36, g.v - 0.22]; }
-  function demo() { start(...demoStart(), false); }
+  const demoStart = () => SURFACES[cur].start.map(t => t * M);
+
+  const voice = k => document.dispatchEvent(new CustomEvent("voice", { detail: k }));
+
+  /* ---- The (i) tags that sit on the ground ---- */
+  function placeTag(r) {
+    const e = r.pts[r.n], p = proj(e[0], e[1], e[2]); if (!p) return;
+    const W = hero.clientWidth;
+    pathTag.style.left = Math.min(W - 30, p[0] * cell + 14) + "px"; pathTag.style.top = Math.max(8, p[1] * cell - 30) + "px";
+    pathTag.classList.toggle("flip", p[0] * cell > W - 320);
+    pathTag.hidden = false;
+  }
+  function placeGroundTag() {
+    const p = proj(M * 0.92, M * 0.95, Hm[(M * 0.95 | 0) * N + (M * 0.92 | 0)]); if (!p) return;
+    groundTag.style.left = Math.min(hero.clientWidth - 30, p[0] * cell) + "px"; groundTag.style.top = Math.max(60, p[1] * cell - 34) + "px";
+    groundTag.classList.add("flip");
+  }
 
   /* ---- Drawing ---- */
-  const put = (x, y, c) => { x |= 0; y |= 0; if (x >= 0 && y >= 0 && x < cw && y < ch) img32[y * cw + x] = PAL32[c]; };
-  function ring(cx, cy, rad, c, dotted) { const n = Math.max(8, rad * 7 | 0); for (let k = 0; k < n; k++) { if (dotted && k & 1) continue; const a = k / n * 6.283; put(cx + Math.cos(a) * rad + 0.5, cy + Math.sin(a) * rad + 0.5, c); } }
+  const put = (x, y, c) => { x |= 0; y |= 0; if (x >= 0 && y >= 0 && x < cw && y < ch) lev[y * cw + x] = c; };
+  const seen = (x, y, z) => { x |= 0; y |= 0; return x >= 0 && y >= 0 && x < cw && y < ch && z <= zbuf[y * cw + x] + 6; };
+  function ring(cx, cy, rad, c) { const n = Math.max(10, rad * 7 | 0); for (let k = 0; k < n; k += 2) { const a = k / n * 6.283; put(cx + Math.cos(a) * rad + 0.5, cy + Math.sin(a) * rad + 0.5, c); } }
   function draw(now) {
-    for (let i = 0; i < cw * ch; i++) img32[i] = PAL32[base[i]];
-    const [bx, by] = toCell(best.mu, best.mv);                                         // the lowest point: a small white cross
-    for (let k = -2; k <= 2; k++) { put(bx + k, by, 4); put(bx, by + k, 4); }
-    runs.forEach((r, idx) => {
-      const newest = idx === runs.length - 1;
-      for (let k = 0; k <= r.i; k++) {                                                 // the trail: solid near the head, dotted further back
-        const [x, y] = toCell(r.pts[k][0], r.pts[k][1]), age = r.i - k;
-        if (newest ? age < 70 || r.done || (k & 3) < 2 : (k & 3) === 0) put(x, y, newest ? ORANGE : 3);   // only the newest run is orange; older ones fade to grey dots
+    ground(now);
+    const r = run;
+    if (r) {
+      const upto = r.done ? r.n : r.i;
+      for (let k = 0; k <= upto; k++) {                                // the trail: dense near the head, thinning behind it
+        const p = proj(r.pts[k][0], r.pts[k][1], r.pts[k][2]); if (!p || !seen(p[0], p[1], p[2])) continue;
+        const age = r.done ? (r.n - k) / r.n * 0.45 : (upto - k) / Math.max(30, upto);
+        if (BAYER[((p[1] | 0) & 3) << 2 | (p[0] | 0) & 3] < 1 - age * 0.85) put(p[0], p[1], ORANGE);
       }
-      const [sx, sy] = toCell(r.pts[0][0], r.pts[0][1]);                               // where it started: a hollow square
-      const oc = newest ? ORANGE : 3; for (let k = -2; k <= 2; k++) { put(sx + k, sy - 2, oc); put(sx + k, sy + 2, oc); put(sx - 2, sy + k, oc); put(sx + 2, sy + k, oc); }
-      const a = r.pts[r.i], b = r.pts[Math.min(r.n, r.i + 1)], t = r.done ? 0 : Math.max(0, (r.f || 0) - r.i);   // the head glides between steps
-      const [hx, hy] = toCell(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t);
-      if (r.done) {                                                                    // where it settled: a ring, and a pulse when it arrives
-        const t = (now - r.pulse) / 900; if (t >= 0 && t < 1) ring(hx, hy, 4 + t * 14, ORANGE, true);
-        ring(hx, hy, 4, oc);
+      const s = proj(r.pts[0][0], r.pts[0][1], r.pts[0][2]);           // where it started: a hollow square
+      if (s) for (let k = -1; k <= 1; k++) { put(s[0] + k, s[1] - 1, ORANGE); put(s[0] + k, s[1] + 1, ORANGE); put(s[0] - 1, s[1] + k, ORANGE); put(s[0] + 1, s[1] + k, ORANGE); }
+      const a = r.pts[r.i], b = r.pts[Math.min(r.n, r.i + 1)], t = r.done ? 0 : r.f - r.i;
+      const hp = proj(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t);
+      if (hp) {
+        if (r.done) {                                                  // arrival: a pulse, then a small square that stays
+          const u = (now - r.pulse) / 900; if (u >= 0 && u < 1) ring(hp[0], hp[1], 3 + u * 12, ORANGE);
+          for (let oy = -2; oy <= 2; oy++) for (let ox = -2; ox <= 2; ox++) put(hp[0] + ox, hp[1] + oy, Math.abs(ox) < 2 && Math.abs(oy) < 2 ? HI : ORANGE);
+        } else {                                                       // the head: bright, ringed in orange while it moves
+          for (let k = -2; k <= 2; k++) { put(hp[0] + k, hp[1] - 2, ORANGE); put(hp[0] + k, hp[1] + 2, ORANGE); put(hp[0] - 2, hp[1] + k, ORANGE); put(hp[0] + 2, hp[1] + k, ORANGE); }
+          for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) put(hp[0] + ox, hp[1] + oy, HI);
+        }
       }
-      if (!r.done) for (let k = -2; k <= 2; k++) { put(hx + k, hy - 2, ORANGE); put(hx + k, hy + 2, ORANGE); put(hx - 2, hy + k, ORANGE); put(hx + 2, hy + k, ORANGE); }
-      for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) put(hx + ox, hy + oy, r.done && !newest ? 3 : WHITE);   // the head: a white ball, ringed while it moves
-    });
-    if (inside && fine) { const cx = px / cell | 0, cy = py / cell | 0; for (const [ox, oy] of [[-4, 0], [-3, 0], [3, 0], [4, 0], [0, -4], [0, -3], [0, 3], [0, 4]]) put(cx + ox, cy + oy, 4); }
+    }
+    for (let i = 0; i < cw * ch; i++) img32[i] = PAL32[lev[i]];
     ctx.putImageData(img, 0, 0);
   }
 
-  const pulsing = now => runs.some(r => r.done && now - r.pulse < 950);
   function tick(now) {
     raf = requestAnimationFrame(tick);
-    if (now - last < 31) return; last = now;
-    let live = false;
-    for (const r of runs) if (!r.done) {
-      live = true; const f = Math.min(r.n, (now - r.t0) / r.dur * r.n), i = f | 0; r.f = f;
+    if (now - last < 31) return;
+    const dt = Math.min(0.1, (now - last) / 1000 || 0.033); last = now;
+    let moving = false;
+    const r = run;
+    if (r && !r.done) {
+      moving = true; const f = Math.min(r.n, (now - r.t0) / r.dur * r.n), i = f | 0; r.f = f;
       if (i !== r.i) { r.i = i; readout(r); }
-      if (i >= r.n) settle(r, now);
+      if (f >= r.n) settle(r, now);
     }
-    if (!live && !pulsing(now)) { running = false; cancelAnimationFrame(raf); draw(now); return; }   // nothing moves: stop drawing until something does
+    if (paint !== paintTo) { moving = true; paint = paintTo > paint ? Math.min(paintTo, paint + dt / 1.4) : Math.max(paintTo, paint - dt / 1.0); }
+    const pulsing = r && r.done && now - r.pulse < 950;
     draw(now);
+    if (!moving && !pulsing) { running = false; cancelAnimationFrame(raf); }
   }
   function setRun() {
     const want = visible && !document.hidden && !reduced;
     if (want && !running) {
       running = true; last = 0; const now = performance.now();
-      runs.forEach(r => { if (!r.done) r.t0 = now - r.i / r.n * r.dur; });               // a paused run picks up where it stopped
-      if (!runs.length) demo();
+      if (run && !run.done) run.t0 = now - run.f / run.n * run.dur;   // a paused run picks up where it stopped
       raf = requestAnimationFrame(tick);
     } else if (!want && running) { running = false; cancelAnimationFrame(raf); }
   }
+  function redraw() { if (reduced) { paint = paintTo; if (run && !run.done) finish(run); } if (cw) draw(performance.now()); setRun(); }
 
-  /* ---- Pointer ---- */
-  const tip = document.createElement("div"); tip.className = "hl hl-tip"; tip.hidden = true; layer.appendChild(tip);
-  hero.addEventListener("pointermove", e => {
-    const r = hero.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; inside = true;
-    if (!fine || e.target.closest("a, button, .hero-bl, .hero-br, h1, .hero-id, .hero-key")) { tip.hidden = true; return; }
-    const [u, v] = toUV(px / cell, py / cell); tip.hidden = false; tip.textContent = "error here " + err(u, v).toFixed(2);
-    tip.style.left = Math.min(r.width - 130, px + 16) + "px"; tip.style.top = py + 18 + "px";
-    if (!running) draw(performance.now());
-  });
-  hero.addEventListener("pointerleave", () => { inside = false; tip.hidden = true; });
+  /* ---- Pointer and controls ---- */
   hero.addEventListener("click", e => {
-    if (e.target.closest("a, button")) return;
-    const r = hero.getBoundingClientRect(), [u, v] = toUV((e.clientX - r.left) / cell, (e.clientY - r.top) / cell);
-    if (v > 0.9) return;
-    runs.forEach(o => { if (!o.done) { o.done = true; o.i = o.n; o.pulse = -1e9; } });      // an unfinished run steps aside for the visitor's
-    const run = start(u, v, true); sound.play("blip"); tip.hidden = true;
-    if (reduced) finish(run); else setRun();
+    if (e.target.closest("a, button, .info, .hctl")) return;
+    const b = hero.getBoundingClientRect(), x = (e.clientX - b.left) / cell | 0, y = (e.clientY - b.top) / cell | 0;
+    if (x < 0 || y < 0 || x >= cw || y >= ch) return;
+    const k = y * cw + x; if (isNaN(pkx[k])) return;
+    run = start(pkx[k], pky[k], true); sound.play("blip"); redraw(); voice("run:start");
+  });
+  function surface(k) {
+    use((k + SURFACES.length) % SURFACES.length); run = start(...demoStart(), false); placeGroundTag(); redraw(); voice("surface:" + (cur + 1));
+  }
+  hero.querySelectorAll("[data-surface-step]").forEach(b => b.addEventListener("click", () => { surface(cur + +b.dataset.surfaceStep); sound.play("step"); }));
+  if (R.paint) R.paint.addEventListener("click", () => {
+    paintTo = paintTo ? 0 : 1; R.paint.setAttribute("aria-pressed", String(!!paintTo)); sound.play("toggle"); redraw();
   });
 
-  new ResizeObserver(size).observe(hero);
+  /* ---- Theme: redraw at once in the new palette, so a theme transition captures a finished frame ---- */
+  document.addEventListener("themechange", () => { setPalette(); if (cw) draw(performance.now()); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { setPalette(); if (cw) draw(performance.now()); });
+
+  use(0);
+  new ResizeObserver(() => { size(); placeGroundTag(); }).observe(hero);
   new IntersectionObserver(es => { visible = es[0].isIntersecting; setRun(); }).observe(hero);
   document.addEventListener("visibilitychange", setRun);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { cw = 0; size(); });   // the text moved once the faces loaded
-  size();
+  size(); placeGroundTag();
 })();

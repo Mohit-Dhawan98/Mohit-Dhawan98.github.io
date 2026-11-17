@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>REET · Mohit Dhawan</title>
+<meta name="description" content="Research on shrinking an AI agent&#x27;s context by keeping the facts instead of trimming the words. Paused; small experiments, honestly reported.">
+<link rel="canonical" href="https://mohit-dhawan98.github.io/projects/reet.html">
+<meta property="og:url" content="https://mohit-dhawan98.github.io/projects/reet.html">
+<meta property="og:image" content="https://mohit-dhawan98.github.io/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mohit Dhawan: an error surface in square cells, with an orange path of gradient descent ending at its lowest point.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="https://mohit-dhawan98.github.io/manifest.json">
+<link rel="alternate" type="text/markdown" href="https://mohit-dhawan98.github.io/llms.txt">
+<meta property="og:title" content="REET · Mohit Dhawan">
+<meta property="og:description" content="Research on shrinking an AI agent&#x27;s context by keeping the facts instead of trimming the words. Paused; small experiments, honestly reported.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#eceae4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add("js");
+  try {
+    var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") d.setAttribute("data-theme", t);
+    if (localStorage.getItem("sound") === "off") d.classList.add("sound-off");
+  } catch (e) {}
+  setTimeout(function () { if (!window.motion) d.classList.remove("js"); }, 3000);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap"></noscript>
+<link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="bar band">
+  <nav class="nav" aria-label="Site">
+    <a class="nav-name" href="../index.html">Mohit Dhawan</a>
+    <div class="nav-links">
+      <a href="../help/index.html">How I help</a>
+      <a href="../work/index.html" aria-current="page">Work</a>
+      <a href="../contact/index.html">Contact</a>
+      <button type="button" class="snd" data-sound-toggle aria-pressed="true" aria-label="Interface sounds"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 3V7l-4 3H4z"/><path class="w1" d="M15 9.5a3.5 3.5 0 0 1 0 5"/><path class="w2" d="M17.5 7a7 7 0 0 1 0 10"/><path class="x" d="M15.5 9.5l5 5m0-5l-5 5"/></svg><span data-sound-label>Sound on</span></button>
+      <button type="button" class="thm" data-theme-toggle aria-label="Dark theme for the page" aria-pressed="false"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4L7 17m10-10l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </div>
+  </nav><span class="read-line" aria-hidden="true"></span>
+</header><canvas class="seam" aria-hidden="true"></canvas>
+<main class="page dd project" id="main" data-voice-page="project:reet">
+  <nav class="back-row" aria-label="Back and breadcrumb"><a class="back" href="../work/index.html#p-reet" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg><span>Work</span></a><p class="crumb"><a href="../index.html">Home</a><i aria-hidden="true">/</i> <a href="../work/index.html">Work</a><i aria-hidden="true">/</i> <span aria-current="page">REET</span></p></nav>
+  <h1 style="view-transition-name:p-reet">REET</h1>
+  <p class="lede">Research on shrinking an AI agent&#x27;s context by keeping the facts instead of trimming the words. Paused; small experiments, honestly reported.</p>
+  <dl class="facts"><div><dt>Kind</dt><dd>Agentic AI</dd></div><div><dt>Where</dt><dd>Open source</dd></div><div><dt>Status</dt><dd>research prototype, paused</dd></div><div><dt>Links</dt><dd><a class="tlink" href="https://github.com/Mohit-Dhawan98/reet" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></dd></div></dl>
+    <h2>The problem</h2>
+  <p>An agent&#x27;s context keeps growing, and every token is paid for on every call. The usual fixes drop words or sentences, and what they keep can lose its meaning: one baseline turned &quot;1,000 requests per minute&quot; into &quot;1,000 minute&quot;.</p>
+  <h2>What was built</h2>
+  <p>A pipeline that cuts a document into chunks, has a language model design an extraction schema for each, and uses GLiNER2, a small local model, to pull out entities, relations and facts as compact text. Around it: one interface for the baseline compressors (truncation, LLMLingua-2, LongLLMLingua, QUITO-X and EXIT) and a question-answering evaluation.</p>
+  <h2>What the experiments found</h2>
+  <p>Everything was measured on small samples, once each, so the results are leads, not evidence.</p>
+  <p>On ten HotpotQA questions, the best variant kept 27% of the tokens and scored 0.50 F1, against 0.58 for the full context and 0.43 for LLMLingua. Each question is worth about 0.1, so that gap is less than one question. Entities were found; the relations between them mostly were not, and every question that turned on who did what to whom was missed.</p>
+  <p>Folding the relation into the entity label made the context much smaller, about 7% of the tokens, and less accurate: 0.38 F1, below every baseline.</p>
+  <h2>What it points to</h2>
+  <p>When short entity cards were written outside the pipeline as a ceiling, they carried the answers well, which suggests the format is sound and the extraction is the bottleneck. The next step would be a small model trained to extract complete subject, relation and object triples. It is not built.</p>
+  <h2>Status</h2>
+  <p>A research prototype, paused. The package installs, its tests pass and the truncation baseline runs; the model-based parts were not rerun for the public release. Schema design still calls an API model.</p>
+  <div class="next">
+    <div><span>Next project</span><a href="../projects/sre-incident-env.html">sre-incident-env</a></div>
+    <div><span>Contact</span><a href="../contact/index.html">Write to me</a></div>
+  </div>
+  <p class="back-foot"><a class="back" href="../work/index.html#p-reet" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg><span>Back to Work</span></a></p>
+</main>
+<a class="back-fab" href="../work/index.html#p-reet" data-back aria-label="Back to Work"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></a>
+<footer class="foot"><span>Mohit Dhawan, Bengaluru</span><span><a href="mailto:mohit.dhawan2510@gmail.com?subject=Project%20enquiry">Write to me</a></span></footer>
+<script>window.SITE_ROOT = "../";</script>
+<script src="../js/site.js"></script>
+</body>
+</html>

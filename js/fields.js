@@ -12,7 +12,11 @@
   const stage = document.querySelector("[data-stage]"); if (!stage) return;
   const mo = window.motion || {}, reduced = !!mo.reduced;
   const states = Array.from(stage.querySelectorAll(".state")), pin = stage.querySelector(".stage-pin");
-  const PAL = [[0, 0, 0], [38, 38, 38], [84, 84, 84], [146, 146, 146], [232, 232, 232], [255, 89, 4], [255, 255, 255]].map(([r, g, b]) => (255 << 24 | b << 16 | g << 8 | r) >>> 0);
+  const PALS = { dark: [[0, 0, 0], [38, 38, 38], [84, 84, 84], [146, 146, 146], [232, 232, 232], [255, 89, 4], [255, 255, 255]],
+                 light: [[236, 234, 228], [214, 211, 203], [174, 170, 161], [118, 115, 108], [42, 41, 38], [240, 80, 0], [18, 18, 17]] };
+  let PAL, theme = "";
+  function setPal() { theme = getComputedStyle(document.documentElement).colorScheme.indexOf("dark") >= 0 ? "dark" : "light"; PAL = PALS[theme].map(([r, g, b]) => (255 << 24 | b << 16 | g << 8 | r) >>> 0); }
+  setPal();
   const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) / 16);
   const G = 2, D = 3, W = 4, O = 5, HI = 6;                       // grey, light grey, near white, orange, white
 
@@ -44,7 +48,7 @@
   }
   const ease = t => t < 0 ? 0 : t > 1 ? 1 : 1 - Math.pow(1 - t, 3), clamp = t => t < 0 ? 0 : t > 1 ? 1 : t, lerp = (a, b, t) => a + (b - a) * t;
   // Where a scene may draw: beside the text on a wide screen, above it on a narrow one.
-  function region(s) { if (s.still) return { x: 4, y: 6, w: s.w - 8, h: s.h - 12 }; return s.w * 4 > 760 ? { x: s.w * 0.47 | 0, y: s.h * 0.16 | 0, w: s.w * 0.47 | 0, h: s.h * 0.66 | 0 } : { x: 8, y: s.h * 0.07 | 0, w: s.w - 16, h: s.h * 0.42 | 0 }; }
+  function region(s) { if (s.still) return { x: 4, y: 6, w: s.w - 8, h: s.h - 12 }; return s.w * 4 > 760 ? { x: s.w * 0.47 | 0, y: s.h * 0.16 | 0, w: s.w * 0.47 | 0, h: s.h * 0.66 | 0 } : { x: 8, y: s.h * 0.36 | 0, w: s.w - 16, h: s.h * 0.3 | 0 }; }
 
   /* ---- Agents: plan, act with tools, check, retry, pass ---- */
   function agents(s, p) {
@@ -131,6 +135,7 @@
       let cv = st.querySelector("canvas"); if (!cv) { cv = document.createElement("canvas"); cv.className = "state-cv"; cv.setAttribute("aria-hidden", "true"); st.insertBefore(cv, st.firstChild); }
       const s = Surface(cv); s.still = true; const paint = () => { if (!s.fit()) return; s.clear(); s.fade(1); SCENES[st.dataset.kind](s, 0.8); s.flush(); };
       paint(); new ResizeObserver(paint).observe(cv); st.classList.add("on");
+      const re = () => { setPal(); paint(); }; document.addEventListener("themechange", re); matchMedia("(prefers-color-scheme: dark)").addEventListener("change", re);
     });
   }
   if (reduced || !CSS.supports("position", "sticky")) return stills();
@@ -141,11 +146,14 @@
   function progress() { const r = stage.getBoundingClientRect(), span = r.height - pin.offsetHeight; return span > 0 ? Math.max(0, Math.min(0.9999, -r.top / span)) : 0; }
   function frame() {
     queued = false; if (!visible || !s.fit()) return;
-    const P = progress() * states.length, i = Math.min(states.length - 1, P | 0), p = P - i, key = i + ":" + (p * 400 | 0) + ":" + s.w + "x" + s.h;
-    states.forEach((st, k) => st.classList.toggle("on", k === i && p > 0.2 && (p < 0.94 || k === states.length - 1)));
+    const P = progress() * states.length, i = Math.min(states.length - 1, P | 0), raw = P - i, key = i + ":" + (raw * 400 | 0) + ":" + s.w + "x" + s.h + ":" + theme;
+    // the first field is already under way when the page opens, so the first screen is never empty
+    const p = i === 0 ? 0.5 + raw * 0.5 : raw;
+    states.forEach((st, k) => st.classList.toggle("on", k === i && (i === 0 || raw > 0.2) && (raw < 0.94 || k === states.length - 1)));
     dots.forEach((d, k) => d.classList.toggle("on", k === i));
+    stage.classList.toggle("deep", P > 0.55);
     if (key === lastKey) return; lastKey = key;
-    s.clear(); s.fade(Math.min(1, p / 0.07, i === states.length - 1 ? 1 : (1 - p) / 0.06));
+    s.clear(); s.fade(Math.min(1, i === 0 ? 1 : raw / 0.07, i === states.length - 1 ? 1 : (1 - raw) / 0.06));
     SCENES[states[i].dataset.kind](s, p); s.flush();
   }
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };
@@ -154,4 +162,6 @@
   // The step marks jump to a state: to the point in the scroll where its scene has settled.
   dots.forEach((d, k) => d.addEventListener("click", () => { const span = stage.offsetHeight - pin.offsetHeight; scrollTo({ top: stage.getBoundingClientRect().top + scrollY + span * (k + 0.75) / states.length, behavior: "smooth" }); }));
   stage.classList.add("live"); ask();
+  const retheme = () => { setPal(); lastKey = ""; ask(); };
+  document.addEventListener("themechange", retheme); matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 })();

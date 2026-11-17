@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /options/
+Disallow: /options.html
+Disallow: /archive/
+Disallow: /lab/
+Sitemap: https://mohit-dhawan98.github.io/sitemap.xml

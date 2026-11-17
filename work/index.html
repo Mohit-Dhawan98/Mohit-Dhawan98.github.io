@@ -3,12 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mohit Dhawan / Work</title>
-<meta name="description" content="Projects by Mohit Dhawan that you can open: agents and their tooling, NLP, matching, and things made for their own sake.">
-<meta property="og:title" content="Mohit Dhawan / Work">
-<meta property="og:description" content="Projects by Mohit Dhawan that you can open: agents and their tooling, NLP, matching, and things made for their own sake.">
+<title>Work · Mohit Dhawan</title>
+<meta name="description" content="Projects by Mohit Dhawan: agents, NLP, matching, and things made for their own sake.">
+<link rel="canonical" href="https://mohit-dhawan98.github.io/work/">
+<meta property="og:url" content="https://mohit-dhawan98.github.io/work/">
+<meta property="og:image" content="https://mohit-dhawan98.github.io/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mohit Dhawan: an error surface in square cells, with an orange path of gradient descent ending at its lowest point.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="https://mohit-dhawan98.github.io/manifest.json">
+<link rel="alternate" type="text/markdown" href="https://mohit-dhawan98.github.io/llms.txt">
+<meta property="og:title" content="Work · Mohit Dhawan">
+<meta property="og:description" content="Projects by Mohit Dhawan: agents, NLP, matching, and things made for their own sake.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#eceae4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -24,7 +34,9 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap"></noscript>
 <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
@@ -41,148 +53,119 @@
     </div>
   </nav>
 </header><canvas class="seam" aria-hidden="true"></canvas>
-<main class="page work" id="main">
+<main class="page work" id="main" data-voice-page="work">
+  <nav class="back-row" aria-label="Back and breadcrumb"><a class="back" href="../index.html" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg><span>Home</span></a><p class="crumb"><a href="../index.html">Home</a><i aria-hidden="true">/</i> <span aria-current="page">Work</span></p></nav>
   <header class="work-h">
     <h1>Work</h1>
-    <p class="say">Projects you can open. A card marked with an arrow opens its own page. A card marked with a plus opens here.</p>
+    <p class="say">Projects grouped by kind. Each opens its own page. <a class="tlink" href="#all">All projects as a list</a></p>
   </header>
-  <section class="kind rv" id="k-agents">
+  <section class="kind" id="k-agents" data-voice="kind:agents">
     <header class="kind-h"><h2>Agentic AI</h2><p>Systems where a model plans and acts through tools, and the tests that show whether it did the job.</p></header>
-    <ul class="cards">
-      <li class="card" id="p-providio-os">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-providio-os"><span class="card-name">Providio OS</span><span class="card-line">Turns the signals an airline&#x27;s commercial teams receive each day into decisions a person can approve.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Done at <a class="co" href="https://providio.ai" target="_blank" rel="noopener"><img src="../logos/providio.svg" alt="" height="16">Providio</a></span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-providio-os"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> Hundreds of thousands of signals reach an airline&#x27;s commercial teams every morning. Each team reads them in its own tools, so the dashboards are current and the decisions are late.</p>
-          <p><b>What was built.</b> A harness around a foundation model that gives it context, memory, tools and controls. Every piece of context carries its source, the part of the organization it belongs to and the period it is true for, and code decides what is allowed to act.</p>
-          
-          <a class="dive" href="https://providio.ai/blogs/intro-to-providio-os" target="_blank" rel="noopener">The team&#x27;s public write-up<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-      <li class="card" id="p-sre-incident-env">
-        <a class="card-head" href="../projects/sre-incident-env.html"><span class="card-name" style="view-transition-name:p-sre-incident-env">sre-incident-env</span><span class="card-line">A test of whether an AI agent can fix a simulated production outage, where a wrong fix makes things worse.</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens a page</span></p>
-      </li>
-      <li class="card" id="p-resolve-free-mcp">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-resolve-free-mcp"><span class="card-name">resolve-free-mcp</span><span class="card-line">Lets an AI assistant edit video in the free edition of DaVinci Resolve.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-resolve-free-mcp"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> DaVinci Resolve only lets outside programs control it in the paid edition. The free edition runs scripts from its own console and nowhere else.</p>
-          <p><b>What was built.</b> An MCP server that writes commands to a folder, and a small Lua loop inside Resolve that runs them. Results come back through the names of exported timelines, because exporting a timeline is something the free edition always allows.</p>
-          <ul class="results"><li class="note"><b>9</b><span>tools exposed to the model, from importing media to rendering</span></li></ul>
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/resolve-free-mcp" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-      <li class="card" id="p-adalyst-mcp">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-adalyst-mcp"><span class="card-name">adalyst-mcp</span><span class="card-line">Lets an AI assistant look up a brand&#x27;s live ads on Facebook and Instagram and describe what they are doing.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-adalyst-mcp"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> Checking what competitors are advertising means searching ad libraries by hand, one brand and one ad at a time.</p>
-          <p><b>What was built.</b> An MCP server that searches a brand&#x27;s current Meta ads and analyzes the creatives, the messaging and the opening of each video, for one brand or several side by side.</p>
-          
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/adalyst-mcp" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-    </ul>
+    <div class="carousel" data-carousel aria-roledescription="carousel" aria-label="Agentic AI projects">
+      <ul class="car-track">
+        <li class="card" id="p-providio-os" data-voice="project:providio-os">
+          <a class="card-a" href="../projects/providio-os.html"><span class="card-name" style="view-transition-name:p-providio-os">Providio OS</span><span class="card-line">Turns the signals an airline&#x27;s commercial teams receive each day into decisions a person can approve.</span><span class="card-foot"><span class="co">Done at <img src="../logos/providio.svg" alt="" width="16" height="16">Providio</span></span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-reet" data-voice="project:reet">
+          <a class="card-a" href="../projects/reet.html"><span class="card-name" style="view-transition-name:p-reet">REET</span><span class="card-line">Research on shrinking an AI agent&#x27;s context by keeping the facts instead of trimming the words. Paused; small experiments, honestly reported.</span><span class="card-foot">Open source<span class="card-status">research prototype, paused</span></span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-sre-incident-env" data-voice="project:sre-incident-env">
+          <a class="card-a" href="../projects/sre-incident-env.html"><span class="card-name" style="view-transition-name:p-sre-incident-env">sre-incident-env</span><span class="card-line">A test of whether an AI agent can fix a simulated production outage, where a wrong fix makes things worse.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+      </ul>
+      <div class="car-ctl"><button type="button" class="car-b" data-car="-1" aria-label="Previous project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></button><button type="button" class="car-b" data-car="1" aria-label="Next project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></button></div>
+    </div>
   </section>
-  <section class="kind rv" id="k-nlp">
+  <section class="kind" id="k-nlp" data-voice="kind:nlp">
     <header class="kind-h"><h2>NLP</h2><p>Text turned into structure a system can act on.</p></header>
-    <ul class="cards">
-      <li class="card" id="p-ecommerce-classifier">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-ecommerce-classifier"><span class="card-name">EcommerceClassifier</span><span class="card-line">Reads a product&#x27;s photo and its title and files it into one of 434 grocery and household categories.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Done at <a class="co" href="https://www.commerceiq.ai" target="_blank" rel="noopener"><img src="../logos/commerceiq.png" alt="" height="16">CommerceIQ</a></span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-ecommerce-classifier"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> An online store needs every product in the right category for search and recommendations to work. A title alone is often ambiguous, and so is a photo alone.</p>
-          <p><b>What was built.</b> A model that joins a ResNet50 image encoder and Jina text embeddings with fully connected layers, trained on product images and titles from two Amazon domains, Grocery and Gourmet and Health and Household. It returns its three best guesses, and when the best is below 0.7 confidence it puts Others first.</p>
-          <ul class="results"><li class="note"><b>83%</b><span>overall accuracy on a held-out validation set, weaker on mixed classes such as assortments and gift packs</span></li><li class="note"><b>434</b><span>categories across the two domains</span></li></ul>
-          <a class="dive" href="https://huggingface.co/Maverick98/EcommerceClassifier" target="_blank" rel="noopener">The model on Hugging Face<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a> <a class="dive" href="https://levelup.gitconnected.com/advanced-e-commerce-product-classification-with-multimodal-deep-learning-6889187139b8" target="_blank" rel="noopener">Read the write-up<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-      <li class="card" id="p-recall">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-recall"><span class="card-name">Recall</span><span class="card-line">A private place to save what you read and find it again by idea, not only by keyword.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-recall"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> Saved articles pile up in bookmarks and are never found again, and most tools that fix this keep a copy of your reading on someone else&#x27;s server.</p>
-          <p><b>What was built.</b> A self-hosted system with a browser extension, a phone web app and a Telegram bot for saving. It summarizes and tags each item, links items in a knowledge graph and searches them by meaning.</p>
-          
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/Recall" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-      <li class="card" id="p-mindscroll">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-mindscroll"><span class="card-name">MindScroll</span><span class="card-line">Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source<span class="card-status">offline, being rebuilt for the phone</span></span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-mindscroll"><div class="exp-in"><div class="card-more">
-          <p class="card-note">The hosted version is offline. It runs locally, and it is being rebuilt for the phone.</p><p><b>The problem.</b> Finishing a book is not the same as remembering it. Notes and highlights are rarely looked at again.</p>
-          <p><b>What was built.</b> A pipeline that reads a PDF or EPUB, finds its chapters, and writes flashcards, then quizzes and summaries from those cards, with a web app that tracks what each reader has learned.</p>
-          
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/MindScroll" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-    </ul>
+    <div class="carousel" data-carousel aria-roledescription="carousel" aria-label="NLP projects">
+      <ul class="car-track">
+        <li class="card" id="p-ecommerce-classifier" data-voice="project:ecommerce-classifier">
+          <a class="card-a" href="../projects/ecommerce-classifier.html"><span class="card-name" style="view-transition-name:p-ecommerce-classifier">EcommerceClassifier</span><span class="card-line">Reads a product&#x27;s photo and its title and files it into one of 434 grocery and household categories.</span><span class="card-foot"><span class="co">Done at <img src="../logos/commerceiq.png" alt="" width="16" height="16">CommerceIQ</span></span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-recall" data-voice="project:recall">
+          <a class="card-a" href="../projects/recall.html"><span class="card-name" style="view-transition-name:p-recall">Recall</span><span class="card-line">A private place to save what you read and find it again by idea, not only by keyword.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-mindscroll" data-voice="project:mindscroll">
+          <a class="card-a" href="../projects/mindscroll.html"><span class="card-name" style="view-transition-name:p-mindscroll">MindScroll</span><span class="card-line">Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries.</span><span class="card-foot">Open source<span class="card-status">offline, being rebuilt for the phone</span></span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+      </ul>
+      <div class="car-ctl"><button type="button" class="car-b" data-car="-1" aria-label="Previous project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></button><button type="button" class="car-b" data-car="1" aria-label="Next project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></button></div>
+    </div>
   </section>
-  <section class="kind rv" id="k-classical">
+  <section class="kind" id="k-classical" data-voice="kind:classical">
     <header class="kind-h"><h2>Classical ML and statistics</h2><p>Matching, pricing, forecasting and experiments, where the gain is often in the objective and not in a bigger model.</p></header>
-    <ul class="cards">
-      <li class="card" id="p-mutual-match">
-        <a class="card-head" href="../work/mutual-match.html"><span class="card-name" style="view-transition-name:p-mutual-match">From best match to mutual match</span><span class="card-line">A matching system that introduces two people only when each is near the top of the other&#x27;s list.</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
-        <p class="card-foot"><span>Independent</span><span class="card-how">opens a page</span></p>
-      </li>
-      <li class="card" id="p-dating-env">
-        <a class="card-head" href="../projects/dating-env.html"><span class="card-name" style="view-transition-name:p-dating-env">Dating Environment</span><span class="card-line">A simulated dating world where you write a matching rule and see how many couples it finds. It approximates the article&#x27;s method.</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens a page</span></p>
-      </li>
-    </ul>
+    <div class="carousel" data-carousel aria-roledescription="carousel" aria-label="Classical ML and statistics projects">
+      <ul class="car-track">
+        <li class="card" id="p-mutual-match" data-voice="project:mutual-match">
+          <a class="card-a" href="../work/mutual-match.html"><span class="card-name" style="view-transition-name:p-mutual-match">From best match to mutual match</span><span class="card-line">A matching system that introduces two people only when each is near the top of the other&#x27;s list.</span><span class="card-foot">Independent</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-dating-env" data-voice="project:dating-env">
+          <a class="card-a" href="../projects/dating-env.html"><span class="card-name" style="view-transition-name:p-dating-env">Dating Environment</span><span class="card-line">A simulated dating world where you write a matching rule and see how many couples it finds. It approximates the article&#x27;s method.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+      </ul>
+      <div class="car-ctl"><button type="button" class="car-b" data-car="-1" aria-label="Previous project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></button><button type="button" class="car-b" data-car="1" aria-label="Next project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></button></div>
+    </div>
   </section>
-  <section class="kind rv" id="k-art">
+  <section class="kind" id="k-art" data-voice="kind:art">
     <header class="kind-h"><h2>Art and tools</h2><p>Things made for their own sake, usually for one person&#x27;s use first.</p></header>
-    <ul class="cards">
-      <li class="card" id="p-photo-to-paint">
-        <a class="card-head" href="../projects/photo-to-paint.html"><span class="card-name" style="view-transition-name:p-photo-to-paint">photo-to-paint</span><span class="card-line">Turns a photo into a paint-by-numbers kit you can print and paint.</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens a page</span></p>
-      </li>
-      <li class="card" id="p-anima">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-anima"><span class="card-name">anima</span><span class="card-line">Turns a few painted views of a character into a head that can be turned and given different expressions, then draws it as pixel art.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-anima"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> An image model asked to hold an exact head angle, keep a character&#x27;s identity and draw in pixel art at once could not do it. Asked for two different angles, it returned the same head.</p>
-          <p><b>What was built.</b> A pipeline that splits the job: a mesh and a camera decide the angle, the paintings are projected on as texture, and one small function draws the result in five greys. It is a research prototype.</p>
-          <img class="card-img" src="../projects/img/anima.jpg" width="1400" height="578" alt="Two characters through the same pipeline: the input painting on the left, then the reconstructed head at five angles from front to profile." loading="lazy"><ul class="results"><li class="note"><b>21 of 21</b><span>acceptance checks passed by the first character. The other characters do not pass yet.</span></li><li class="note"><b>420</b><span>frames in that character&#x27;s sprite sheet</span></li></ul>
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/anima" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-      <li class="card" id="p-unscroll">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-unscroll"><span class="card-name">unscroll</span><span class="card-line">A tiny Android app that notices when you open YouTube Shorts or Instagram Reels and sends you back to the home screen.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-unscroll"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> Short-form video is opened by reflex. App blockers and screen-time charts act after the habit has already started.</p>
-          <p><b>What was built.</b> An app that spots the layout of a short-form player in YouTube or Instagram, shows a full-screen reminder and leaves. It has no network permission and no libraries.</p>
-          <ul class="results"><li class="note"><b>60 KB</b><span>size of the whole app</span></li><li class="note"><b>about 450</b><span>lines of Kotlin, small enough to read before trusting it</span></li></ul>
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/unscroll" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-      <li class="card" id="p-portfolio-analyzer">
-        <button type="button" class="card-head" data-exp aria-expanded="false" aria-controls="x-portfolio-analyzer"><span class="card-name">PortfolioAnalyzer</span><span class="card-line">Keeps the facts about your investments with a source and a date on each, so an assistant can cite them instead of guessing.</span><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <p class="card-foot"><span>Open source</span><span class="card-how">opens here</span></p>
-        <div class="exp" id="x-portfolio-analyzer"><div class="exp-in"><div class="card-more">
-          <p><b>The problem.</b> Ask a language model about a portfolio and it answers from memory: a ratio with no date and a different figure each time.</p>
-          <p><b>What was built.</b> A local pipeline for Indian equities and mutual funds that fetches fundamentals and fund prices, stores each with its source and as-of date, scores them with a fixed rubric and writes a digest and a spreadsheet. It is tooling, not investment advice.</p>
-          
-          <a class="dive" href="https://github.com/Mohit-Dhawan98/PortfolioAnalyzer" target="_blank" rel="noopener">Repository<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div></div></div>
-      </li>
-    </ul>
+    <div class="carousel" data-carousel aria-roledescription="carousel" aria-label="Art and tools projects">
+      <ul class="car-track">
+        <li class="card" id="p-photo-to-paint" data-voice="project:photo-to-paint">
+          <a class="card-a" href="../projects/photo-to-paint.html"><span class="card-name" style="view-transition-name:p-photo-to-paint">photo-to-paint</span><span class="card-line">Turns a photo into a paint-by-numbers kit you can print and paint, from the assessment to the painting guide.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-anima" data-voice="project:anima">
+          <a class="card-a" href="../projects/anima.html"><span class="card-name" style="view-transition-name:p-anima">anima</span><span class="card-line">A few painted views of a character become a head you can turn and give expressions, drawn as a five-grey pixel-art sprite sheet.</span><span class="card-foot">Open source<span class="card-status">research prototype</span></span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-resolve-free-mcp" data-voice="project:resolve-free-mcp">
+          <a class="card-a" href="../projects/resolve-free-mcp.html"><span class="card-name" style="view-transition-name:p-resolve-free-mcp">resolve-free-mcp</span><span class="card-line">Lets an AI assistant edit video in the free edition of DaVinci Resolve.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-adalyst-mcp" data-voice="project:adalyst-mcp">
+          <a class="card-a" href="../projects/adalyst-mcp.html"><span class="card-name" style="view-transition-name:p-adalyst-mcp">adalyst-mcp</span><span class="card-line">Lets an AI assistant look up a brand&#x27;s live ads on Facebook and Instagram and describe what they are doing.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-unscroll" data-voice="project:unscroll">
+          <a class="card-a" href="../projects/unscroll.html"><span class="card-name" style="view-transition-name:p-unscroll">unscroll</span><span class="card-line">A tiny Android app that notices when you open YouTube Shorts or Instagram Reels and sends you back to the home screen.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+        <li class="card" id="p-portfolio-analyzer" data-voice="project:portfolio-analyzer">
+          <a class="card-a" href="../projects/portfolio-analyzer.html"><span class="card-name" style="view-transition-name:p-portfolio-analyzer">PortfolioAnalyzer</span><span class="card-line">Keeps the facts about your investments with a source and a date on each, so an assistant can cite them instead of guessing.</span><span class="card-foot">Open source</span><svg class="goes" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></a>
+        </li>
+      </ul>
+      <div class="car-ctl"><button type="button" class="car-b" data-car="-1" aria-label="Previous project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></button><button type="button" class="car-b" data-car="1" aria-label="Next project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 6.5L18 12l-5.5 5.5"/></svg></button></div>
+    </div>
   </section>
-  <section class="kind rv" id="k-writing">
+  <section class="kind" id="k-writing" data-voice="kind:writing">
     <header class="kind-h"><h2>Writing</h2><p>Articles, newest first, with their titles as published.</p></header>
     <ul class="writing">
     <li><a class="wr" href="https://themlnerd.substack.com/p/why-the-girl-you-want-doesnt-want" target="_blank" rel="noopener"><span class="wr-t">Why The Girl You Want Doesn&#x27;t Want You Back<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span><span class="wr-m">The ML Nerd, Substack<i>1 Feb 2026</i></span></a></li>
     <li><a class="wr" href="https://levelup.gitconnected.com/advanced-e-commerce-product-classification-with-multimodal-deep-learning-6889187139b8" target="_blank" rel="noopener"><span class="wr-t">Advanced E-commerce Product Classification with Multimodal Deep Learning<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span><span class="wr-m">Level Up Coding, Medium<i>4 Nov 2024</i></span></a></li>
     <li><a class="wr" href="https://ai.plainenglish.io/mastering-psychology-building-an-expert-rag-with-mistral-7b-and-langchain-39bd5a5bdb4c" target="_blank" rel="noopener"><span class="wr-t">Mastering Psychology: Building an Expert RAG with Mistral-7B and LangChain<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span><span class="wr-m">AI in Plain English, Medium<i>11 Mar 2024</i></span></a></li>
-      <!-- SLOT: a book chapter is expected (title, the book it appeared in, link). Add it to WRITING above; it appears here and on writing/index.html. -->
     </ul>
   </section>
+  <section class="kind" id="all" data-voice="work:all">
+    <header class="kind-h"><h2>All projects</h2><p>The same projects as a plain list.</p></header>
+    <ul class="all-list">
+    <li><a href="../projects/providio-os.html"><b>Providio OS</b><span>Turns the signals an airline&#x27;s commercial teams receive each day into decisions a person can approve.</span></a></li>
+    <li><a href="../projects/reet.html"><b>REET</b><span>Research on shrinking an AI agent&#x27;s context by keeping the facts instead of trimming the words. Paused; small experiments, honestly reported.</span></a></li>
+    <li><a href="../projects/sre-incident-env.html"><b>sre-incident-env</b><span>A test of whether an AI agent can fix a simulated production outage, where a wrong fix makes things worse.</span></a></li>
+    <li><a href="../projects/ecommerce-classifier.html"><b>EcommerceClassifier</b><span>Reads a product&#x27;s photo and its title and files it into one of 434 grocery and household categories.</span></a></li>
+    <li><a href="../projects/recall.html"><b>Recall</b><span>A private place to save what you read and find it again by idea, not only by keyword.</span></a></li>
+    <li><a href="../projects/mindscroll.html"><b>MindScroll</b><span>Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries.</span></a></li>
+    <li><a href="../work/mutual-match.html"><b>From best match to mutual match</b><span>A matching system that introduces two people only when each is near the top of the other&#x27;s list.</span></a></li>
+    <li><a href="../projects/dating-env.html"><b>Dating Environment</b><span>A simulated dating world where you write a matching rule and see how many couples it finds. It approximates the article&#x27;s method.</span></a></li>
+    <li><a href="../projects/photo-to-paint.html"><b>photo-to-paint</b><span>Turns a photo into a paint-by-numbers kit you can print and paint, from the assessment to the painting guide.</span></a></li>
+    <li><a href="../projects/anima.html"><b>anima</b><span>A few painted views of a character become a head you can turn and give expressions, drawn as a five-grey pixel-art sprite sheet.</span></a></li>
+    <li><a href="../projects/resolve-free-mcp.html"><b>resolve-free-mcp</b><span>Lets an AI assistant edit video in the free edition of DaVinci Resolve.</span></a></li>
+    <li><a href="../projects/adalyst-mcp.html"><b>adalyst-mcp</b><span>Lets an AI assistant look up a brand&#x27;s live ads on Facebook and Instagram and describe what they are doing.</span></a></li>
+    <li><a href="../projects/unscroll.html"><b>unscroll</b><span>A tiny Android app that notices when you open YouTube Shorts or Instagram Reels and sends you back to the home screen.</span></a></li>
+    <li><a href="../projects/portfolio-analyzer.html"><b>PortfolioAnalyzer</b><span>Keeps the facts about your investments with a source and a date on each, so an assistant can cite them instead of guessing.</span></a></li>
+    </ul>
+  </section>
+  <p class="back-foot"><a class="back" href="../index.html" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg><span>Home</span></a></p>
 </main>
+<a class="back-fab" href="../index.html" data-back aria-label="Back to Home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11.5 6.5L6 12l5.5 5.5"/></svg></a>
 <footer class="foot"><span>Mohit Dhawan, Bengaluru</span><span><a href="mailto:mohit.dhawan2510@gmail.com?subject=Project%20enquiry">Write to me</a></span></footer>
+<script>window.SITE_ROOT = "../";</script>
 <script src="../js/site.js"></script>
+<script src="../js/carousel.js"></script>
 </body>
 </html>
