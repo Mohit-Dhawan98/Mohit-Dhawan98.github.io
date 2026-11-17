@@ -1,4 +1,4 @@
-/* Shared behaviour for every page: sound, theme, rows that open, copy, the field filter, reveals, and the seam under the black band.
+/* Shared behaviour for every page: sound, theme, rows that open, copy, reveals, and the seam under the black band.
    No dependencies. Exposes window.motion for js/scene.js and js/descent.js. */
 (function () {
   "use strict";
@@ -47,7 +47,7 @@
       set(v) { on = !!v; root.classList.toggle("sound-off", !on); try { localStorage.setItem("sound", on ? "on" : "off"); } catch (e) {} sync(); },
     };
   })();
-  function sync() { $$("[data-sound-toggle]").forEach(b => { b.setAttribute("aria-pressed", sound.on ? "true" : "false"); b.textContent = sound.on ? "Sound on" : "Sound off"; }); }
+  function sync() { $$("[data-sound-toggle]").forEach(b => { b.setAttribute("aria-pressed", sound.on ? "true" : "false"); const l = b.querySelector("[data-sound-label]") || b; l.textContent = sound.on ? "Sound on" : "Sound off"; }); }
   root.classList.toggle("sound-off", !sound.on); sync();
   window.motion = { reduced, sound };
 
@@ -55,19 +55,6 @@
   function setExp(btn, open) {
     btn.setAttribute("aria-expanded", open ? "true" : "false");
     const p = document.getElementById(btn.getAttribute("aria-controls")); if (p) p.classList.toggle("open", open);
-  }
-
-  /* ---- The field filter on the work grid ---- */
-  const map = document.querySelector(".map");
-  function setFilter(f) {
-    if (!map) return;
-    const cur = map.dataset.filter || "", next = cur === f ? "" : f;
-    if (next) map.dataset.filter = next; else delete map.dataset.filter;
-    $$("button[data-filter]", map).forEach(b => b.setAttribute("aria-pressed", String((b.dataset.filter || "") === next)));
-    $$(".cos > li", map).forEach(li => li.classList.toggle("none", !!next && !li.querySelector('.proj > li[data-f="' + next + '"]')));
-    const total = $$(".proj > li", map).length, n = next ? $$('.proj > li[data-f="' + next + '"]', map).length : total;
-    const name = next ? map.querySelector('.fbtn[data-filter="' + next + '"] b').textContent : "";
-    map.querySelector(".map-status").textContent = next ? "Showing " + n + " of " + total + ": " + name : "All " + total + " projects";
   }
 
   /* ---- Theme: follows the system until the switch is used. The black band does not change. ---- */
@@ -88,7 +75,6 @@
     const t = e.target.closest("a, button"); if (!t) return;
     if (t.matches("[data-exp]")) { const open = t.getAttribute("aria-expanded") !== "true"; setExp(t, open); return sound.play(open ? "open" : "close"); }
     if (t.matches("[data-sound-toggle]")) { sound.set(!sound.on); return sound.play("toggle"); }
-    if (t.matches("button[data-filter]")) { setFilter(t.dataset.filter || ""); return sound.play("toggle"); }
     if (t.matches("[data-theme-toggle]")) return theme(t);
     if (t.matches("[data-copy]")) {
       const l = t.querySelector("[data-copy-label]") || t;
@@ -108,12 +94,6 @@
       }
     }
     sound.play("tick");
-  });
-
-  /* ---- A phrase and its number light each other (pointer only, silent) ---- */
-  $$(".field").forEach(f => {
-    const link = (p, on) => $$('[data-p="' + p + '"]', f).forEach(n => n.classList.toggle("lit", on));
-    $$("[data-p]", f).forEach(n => { n.addEventListener("pointerenter", () => link(n.dataset.p, true)); n.addEventListener("pointerleave", () => link(n.dataset.p, false)); });
   });
 
   /* ---- Reveals ---- */

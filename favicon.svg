@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- "m." : a lowercase m drawn as strokes, the full stop in the site's orange. A black tile so it reads on light and dark browser chrome. -->
+  <rect width="32" height="32" rx="6" fill="#000"/>
+  <path d="M6.2 23V11.4M6.2 15.1a3.55 3.55 0 0 1 7.1 0V23M13.3 15.1a3.55 3.55 0 0 1 7.1 0V23" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="butt" stroke-linejoin="round"/>
+  <circle cx="26" cy="21.2" r="2.45" fill="#ff5904"/>
+</svg>

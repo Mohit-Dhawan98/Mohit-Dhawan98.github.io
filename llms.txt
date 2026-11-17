@@ -1,27 +1,47 @@
 # Mohit Dhawan
 
-Data scientist and ML engineer in Bengaluru. Founding ML engineer at Providio. Works across three fields: agentic AI, NLP, and classical ML and statistics.
+Founding ML engineer building multi-agent systems, in Bengaluru. Builds machine learning systems that scale, across agentic AI, NLP, and classical ML and statistics.
 
 Contact: mohit.dhawan2510@gmail.com
-LinkedIn: https://www.linkedin.com/in/mohit-dhawan98/
+Career history: https://www.linkedin.com/in/mohit-dhawan98/
 GitHub: https://github.com/Mohit-Dhawan98
-Writing: https://themlnerd.substack.com
+Writing: https://themlnerd.substack.com and https://medium.com/@mohit.dhawan2510
+Instagram: https://www.instagram.com/releasenotes.md/
 
 ## Fields
 
-- Agentic AI: harnesses, tools and memory around a model, and the evaluation that says whether a change helped. Open work: sre-incident-env, 8 production incident patterns, 4 frontier models baselined.
-- NLP: entity recognition, document parsing, classification, semantic similarity, fine-tuned language models.
-- Classical ML and statistics: two-sided matching, price elasticity, demand forecasting, root-cause models, A/B tests.
+- Agentic AI: Agents that plan, use tools and finish multi-step work, with a check that says whether the job was done.
+- NLP: Text turned into structure a system can act on: products sorted, documents parsed, notes found again by idea.
+- Classical ML and statistics: Matching, pricing, forecasting and experiments. The gain is often in the objective, not in a bigger model.
 
-## Work
+## Projects
 
-- Providio, Founding ML engineer, now. Providio OS, an agent platform for airline revenue and marketing analytics. Public write-up: https://providio.ai/blogs/intro-to-providio-os
-- Prismforce, Senior Data Scientist, 2025 to 2026. Matching job demand to people with a skill recognition model and a skill-job knowledge graph: 30% less client onboarding time, matching over 40% faster and 70% more accurate. A resume and job description parser.
-- CommerceIQ, Data Scientist 2, 2022 to 2024. Automated product classification: 80% less onboarding time, $3M additional revenue. SKU matching across retailers: 80% fewer manual operations, 40% less matching load. A universal classifier as a service. A sales root-cause model: $200K additional ARR.
-- Reliance Jio, Data Scientist, 2021 to 2022. Price elasticity API for AJIO: 15% better sales-to-inventory ratio. Demand forecasting: 3% better accuracy. Dynamic pricing experiments. SHAP-based explanation of black-box models, published as a conference paper.
-- Independent. From best match to mutual match: mutual acceptance from 22% to 68% for an AI matchmaking app. sre-incident-env, resolve-free-mcp, Recall.
+- Providio OS (Agentic AI; done at Providio): Turns the signals an airline's commercial teams receive each day into decisions a person can approve. https://providio.ai/blogs/intro-to-providio-os
+- sre-incident-env (Agentic AI; open source): A test of whether an AI agent can fix a simulated production outage, where a wrong fix makes things worse. projects/sre-incident-env.html
+- resolve-free-mcp (Agentic AI; open source): Lets an AI assistant edit video in the free edition of DaVinci Resolve. https://github.com/Mohit-Dhawan98/resolve-free-mcp
+- adalyst-mcp (Agentic AI; open source): Lets an AI assistant look up a brand's live ads on Facebook and Instagram and describe what they are doing. https://github.com/Mohit-Dhawan98/adalyst-mcp
+- EcommerceClassifier (NLP; done at CommerceIQ): Reads a product's photo and its title and files it into one of 434 grocery and household categories. https://huggingface.co/Maverick98/EcommerceClassifier
+- Recall (NLP; open source): A private place to save what you read and find it again by idea, not only by keyword. https://github.com/Mohit-Dhawan98/Recall
+- MindScroll (NLP; open source): Turns a book into a chapter-by-chapter course of flashcards, quizzes and summaries. Status: offline, being rebuilt for the phone. https://github.com/Mohit-Dhawan98/MindScroll
+- From best match to mutual match (Classical ML and statistics; independent): A matching system that introduces two people only when each is near the top of the other's list. Built as an ML engineer working independently for an AI matchmaking app; the article reports mutual acceptance going from 22% to 68%. work/mutual-match.html
+- Dating Environment (Classical ML and statistics; open source): A simulated dating world where you write a matching rule and see how many couples it finds. It approximates the article's method. projects/dating-env.html
+- photo-to-paint (Art and tools; open source): Turns a photo into a paint-by-numbers kit you can print and paint. projects/photo-to-paint.html
+- anima (Art and tools; open source): Turns a few painted views of a character into a head that can be turned and given different expressions, then draws it as pixel art. https://github.com/Mohit-Dhawan98/anima
+- unscroll (Art and tools; open source): A tiny Android app that notices when you open YouTube Shorts or Instagram Reels and sends you back to the home screen. https://github.com/Mohit-Dhawan98/unscroll
+- PortfolioAnalyzer (Art and tools; open source): Keeps the facts about your investments with a source and a date on each, so an assistant can cite them instead of guessing. https://github.com/Mohit-Dhawan98/PortfolioAnalyzer
+
+## Writing
+
+- Why The Girl You Want Doesn't Want You Back. The ML Nerd, Substack, 1 Feb 2026. https://themlnerd.substack.com/p/why-the-girl-you-want-doesnt-want
+- Advanced E-commerce Product Classification with Multimodal Deep Learning. Level Up Coding, Medium, 4 Nov 2024. https://levelup.gitconnected.com/advanced-e-commerce-product-classification-with-multimodal-deep-learning-6889187139b8
+- Mastering Psychology: Building an Expert RAG with Mistral-7B and LangChain. AI in Plain English, Medium, 11 Mar 2024. https://ai.plainenglish.io/mastering-psychology-building-an-expert-rag-with-mistral-7b-and-langchain-39bd5a5bdb4c
 
 ## Pages
 
-- /index.html: home
-- /work/mutual-match.html: case study, from best match to mutual match
+- index.html: who he is
+- help/index.html: how I help, the three fields
+- work/index.html: the projects, grouped by kind, and the writing
+- work/mutual-match.html: case study, from best match to mutual match
+- projects/sre-incident-env.html, projects/dating-env.html, projects/photo-to-paint.html: project pages
+- writing/index.html: writing
+- contact/index.html: contact

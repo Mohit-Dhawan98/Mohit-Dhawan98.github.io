@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dating Environment / Mohit Dhawan</title>
+<meta name="description" content="dating-env is an open simulated dating world for testing matching rules against a hidden answer key. It approximates the method from the mutual-match article and is not the production system.">
+<meta property="og:title" content="A dating world for testing matching rules">
+<meta property="og:description" content="Write a matching rule in a few lines and score it against an answer key it cannot see. An open approximation of the mutual-match method.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add("js");
+  try {
+    var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") d.setAttribute("data-theme", t);
+    if (localStorage.getItem("sound") === "off") d.classList.add("sound-off");
+  } catch (e) {}
+  setTimeout(function () { if (!window.motion) d.classList.remove("js"); }, 3000);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600&family=Fragment+Mono&family=Doto:wght@900&display=swap">
+<link rel="stylesheet" href="../css/site.css">
+<link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="bar band">
+  <nav class="nav" aria-label="Site">
+    <a class="nav-name" href="../index.html">Mohit Dhawan</a>
+    <div class="nav-links">
+      <a href="../help/index.html">How I help</a>
+      <a href="../work/index.html" aria-current="page">Work</a>
+      <a href="../contact/index.html">Contact</a>
+      <button type="button" class="snd" data-sound-toggle aria-pressed="true" aria-label="Interface sounds"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 3V7l-4 3H4z"/><path class="w1" d="M15 9.5a3.5 3.5 0 0 1 0 5"/><path class="w2" d="M17.5 7a7 7 0 0 1 0 10"/><path class="x" d="M15.5 9.5l5 5m0-5l-5 5"/></svg><span data-sound-label>Sound on</span></button>
+      <button type="button" class="thm" data-theme-toggle aria-label="Dark theme for the page" aria-pressed="false"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4L7 17m10-10l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </div>
+  </nav>
+</header>
+<canvas class="seam" aria-hidden="true"></canvas>
+
+<main class="page dd" id="main">
+  <p class="crumb"><a href="../work/index.html#p-dating-env">work</a> / dating environment</p>
+  <h1 style="view-transition-name:p-dating-env">Dating Environment</h1>
+  <p class="lede">dating-env is a simulated dating world with a hidden answer key. You write a matching rule in a few lines, it proposes introductions for several weeks, and the world tells you how many couples it found out of the most that were possible.</p>
+
+  <dl class="facts">
+    <div><dt>Kind</dt><dd>Classical ML and statistics. Open source.</dd></div>
+    <div><dt>Stack</dt><dd>Python 3.12 and numpy. The playable page runs the same package in your browser.</dd></div>
+    <div><dt>Status</dt><dd>Open. The playable page loaded on 17 November 2026. It approximates a method and is not a production system.</dd></div>
+    <div><dt>Play</dt><dd><a class="tlink" href="https://mohit-dhawan98.github.io/dating-env/" target="_blank" rel="noopener">The playable version<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></dd></div>
+    <div><dt>Code</dt><dd><a class="tlink" href="https://github.com/Mohit-Dhawan98/dating-env" target="_blank" rel="noopener">dating-env on GitHub<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></dd></div>
+    <div><dt>From</dt><dd><a class="tlink" href="../work/mutual-match.html">The mutual-match case study</a></dd></div>
+  </dl>
+
+  <h2>Why it exists</h2>
+  <p>The <a class="tlink" href="../work/mutual-match.html">mutual-match case study</a> describes a matching method that worked on a live app. A reader has to take that on trust. The production code and its data belong to a client and are not public.</p>
+  <p>This is the part that can be public. It is an open version that approximates the method from the article, written from scratch, with made-up people in place of real ones. It is not the production implementation and shares none of its code or data. It carries 12 structured features where the article describes 26, and its text and photo signals are plain vectors, not readings of real profiles.</p>
+
+  <h2>How it works</h2>
+  <p>A world is built from a seed and a set of assumptions you can argue about without reading code: how balanced the two sides are, how often people say yes, how much of attraction no system can observe. From its hidden truth the world works out how far every possible pair would get, in four stages: both say yes, the conversation keeps going, they meet, and both want to meet again.</p>
+
+  <figure class="fig">
+    <div class="fig-in">
+      <div class="phead"><span class="lab">What a rule sees, and <b>what scores it</b></span><span>one world, one seed</span></div>
+      <div class="svgw"><svg class="fx" viewBox="0 0 680 250" role="img" aria-label="A diagram in two halves divided by a dashed line. On the left, hidden from the rule: the made-up people and the answer key. On the right: what the app observed, your rule, and the introductions it proposes. The introductions are scored against the answer key.">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5L8.5 5L1 8.5" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+        <text class="h" x="14" y="18">HIDDEN FROM THE RULE</text>
+        <text class="h" x="262" y="18">WHAT THE RULE WORKS WITH</text>
+        <path class="wall" d="M201 6 V240"/>
+
+        <path class="edge" d="M184 62 H258" marker-end="url(#ah)"/>
+        <text class="s" x="210" y="52">a copy</text>
+        <path class="edge hot" d="M438 62 H480" marker-end="url(#ah)"/>
+        <path class="edge" d="M99 86 V152" marker-end="url(#ah)"/>
+        <path class="edge hot" d="M574 86 V152" marker-end="url(#ah)"/>
+        <path class="edge" d="M484 178 H442" marker-end="url(#ah)"/>
+        <path class="edge" d="M184 178 H258" marker-end="url(#ah)"/>
+
+        <g class="node"><rect class="box" x="14" y="40" width="170" height="46" rx="6"/><text class="t" x="26" y="60">the people</text><text class="s" x="26" y="75">who they really are</text></g>
+        <g class="node"><rect class="box" x="262" y="40" width="176" height="46" rx="6"/><text class="t" x="274" y="60">what the app saw</text><text class="s" x="274" y="75">profiles and feedback</text></g>
+        <g class="node hot"><rect class="box" x="484" y="40" width="182" height="46" rx="6"/><text class="t" x="496" y="60">your rule</text><text class="s" x="496" y="75">a few lines of Python</text></g>
+
+        <g class="node"><rect class="box" x="14" y="156" width="170" height="46" rx="6"/><text class="t" x="26" y="176">the answer key</text><text class="s" x="26" y="191">how far each pair gets</text></g>
+        <g class="node ok"><rect class="box" x="262" y="156" width="176" height="46" rx="6"/><text class="t" x="274" y="176">the score</text><text class="s" x="274" y="191">couples found of possible</text></g>
+        <g class="node"><rect class="box" x="484" y="156" width="182" height="46" rx="6"/><text class="t" x="496" y="176">introductions</text><text class="s" x="496" y="191">proposed week by week</text></g>
+
+        <text class="s" x="14" y="234">The key and the luck are fixed by the seed, so two rules meet the same people on the same days.</text>
+      </svg></div>
+    </div>
+    <figcaption><b>A rule cannot see the answer.</b> It gets a read-only copy of what an app could observe, proposes introductions, and is scored against a key worked out before it ran.</figcaption>
+  </figure>
+
+  <p>A rule sees only what an app could have observed. People who form a couple leave. People who keep hearing nothing open the app less and eventually give up, so a rule that wastes attention early has fewer people to work with later.</p>
+
+  <h2>What you can do with it</h2>
+  <ul class="lines">
+    <li><b>Write a rule and score it.</b> The three stages from the article are included as rules of a few lines each, next to simpler baselines.</li>
+    <li><b>Change the world.</b> Five preset worlds ship with it, and every setting states its meaning, its range and the basis of its default.</li>
+    <li><b>Run a tournament.</b> Every rule against every world, across seeds, with the spread shown.</li>
+    <li><b>Check calibration.</b> Compare predicted chances that both say yes with what happened, and fit the rank curve from logged decisions.</li>
+  </ul>
+
+  <h2>Status and known gaps</h2>
+  <p>I am not quoting results from it here. A number from a simulation describes the world that was configured, and the repository itself shows no output for that reason.</p>
+  <ul class="lines">
+    <li><b>It cannot confirm its own premise.</b> The world assumes dealbreakers are real and that behavior reveals more than stated preference. A method built on those ideas is then tested where they hold.</li>
+    <li><b>The two decisions are treated as independent.</b> Real decisions move together. The product of two chances is useful for ordering pairs and should be checked before it is trusted as a probability.</li>
+    <li><b>It does not scale.</b> Every pair is scored in memory, because that is the clearest way to show the idea.</li>
+    <li><b>It is not stable matching.</b> Assignment is greedy over mutual top pairs and makes no stability guarantee.</li>
+  </ul>
+
+  <h2>The principles behind it</h2>
+  <p>The objective is two-sided: recommending one person to another is only useful if the second would choose the first. Dealbreakers are filters and not features, because a weighted score lets enough agreement elsewhere outvote the one disagreement that decides the outcome. And what people do counts for more than what they said at signup. The repository lists eleven of these, each pointing at the function that carries it.</p>
+
+  <div class="next">
+    <div><span>Next project</span><a href="photo-to-paint.html">photo-to-paint</a></div>
+    <div><span>Contact</span><a href="../contact/index.html">Write to me</a></div>
+  </div>
+</main>
+<footer class="foot"><span>Mohit Dhawan, Bengaluru</span><span><a href="mailto:mohit.dhawan2510@gmail.com?subject=Project%20enquiry">Write to me</a></span></footer>
+
+<script src="../js/site.js"></script>
+</body>
+</html>

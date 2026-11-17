@@ -1,0 +1,32 @@
+/* Styles for the inner pages only: project deep dives, and the redirect stub.
+   Loaded after site.css. Colours come from the site tokens, so both themes follow. */
+
+/* A row of real images inside a deep dive: input, working sheet, result. */
+.shots { margin: 28px 0 8px; }
+.shots-row { display: grid; grid-template-columns: 512fr 594fr 576fr; gap: 14px; align-items: end; }
+.shot { display: grid; gap: 8px; }
+.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 8px; background: #fff; }
+.shot span { font: 11.5px/1.4 var(--mono); color: var(--muted); }
+.shots figcaption { margin: 14px 2px 0; font: 14.5px/1.55 var(--sans); color: var(--muted); }
+.shots figcaption b { color: var(--ink); font-weight: 600; }
+
+/* Still diagrams in the dark panel. They reuse .fig, .fig-in, .phead, .svgw and .fx from site.css. */
+.fx .lbl { font-size: 10.5px; fill: #cdcac6; }
+.fx .edge.trap { stroke: #ff7a6b; stroke-dasharray: 4 4; }
+.fx .trap .box { stroke: #ff7a6b; fill: #2a1512; }
+.fx text.trapt { fill: #ff9d91; }
+.fx .wall { fill: none; stroke: #5a5a5a; stroke-width: 1; stroke-dasharray: 2 5; }
+.fx .hott { fill: #ff8a4d; }
+
+/* Links inside running text and the facts strip keep the site's text-link look. */
+.dd .facts dd { color: var(--ink2); }
+.dd h2 + .lines, .dd p + .lines { margin-top: 16px; }
+.dd .lines + h2 { margin-top: clamp(48px, 7vw, 72px); }
+
+/* Redirect stubs: one line, in case the refresh does not run. */
+.moved { max-width: 728px; margin: 0 auto; padding: 18vh var(--pad) 72px; font: 19px/1.5 var(--serif); color: var(--ink2); }
+
+@media (max-width: 640px) {
+  .shots-row { grid-template-columns: 1fr 1fr; }
+  .shot:first-child { grid-column: 1 / -1; max-width: 60%; }
+}
